@@ -44,45 +44,6 @@ public class MiniMaxAI extends AIModule {
         return 0;
     }
 
-    private int negaMax(int depth, GameStateModule state, int maxPlayer){
-        if(terminate) {
-            return 0;
-        }
-        if(state.isGameOver()){
-            if(state.getWinner() == 0){
-                return 0;
-            }
-            else if(state.getWinner() == me){
-                return maxPlayer * 10000;
-            }
-            return maxPlayer * -10000;
-        }
-        else if(depth == 0){
-            return maxPlayer * evaluate(state);
-        }
-        double best = Double.NEGATIVE_INFINITY;
-        int h = 0;
-        for(int i = 0; i < state.getWidth(); i++){
-            if(state.canMakeMove(i)){
-                state.makeMove(i);
-                int v = -negaMax(depth - 1, state.copy(), -maxPlayer);
-
-                if(best < v){
-                    if(mDepth == depth)
-                        bestAtLevel = i;
-                    best = v;
-                }
-                state.unMakeMove();
-            }
-        }
-
-        if(h == 6){
-            System.out.println("HOPELESS");
-        }
-
-        return (int)best;
-    }
-
     private int miniMax(int depth, GameStateModule state, boolean maxPlayer){
         if(terminate) {
             return -1;
@@ -132,8 +93,6 @@ public class MiniMaxAI extends AIModule {
                 }
             }
         }
-        if(mDepth == depth)
-            System.out.println(h);
         return (int)best;
     }
 }
