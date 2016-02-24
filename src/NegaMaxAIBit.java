@@ -257,7 +257,7 @@ public class NegaMaxAIBit extends AIModule{
             int x = defaultOrder[i];
             if(state.canMakeMove(x)) {
                 state.makeMove(x);
-                score = -negaMaxHelper(depth - 1, state.copy(), -who);
+                score = -negaMaxHelper(depth - 1, state, -who);
                 state.unMakeMove();
             }
             else{
@@ -302,7 +302,7 @@ public class NegaMaxAIBit extends AIModule{
             int x = defaultOrder[i];
             if(state.canMakeMove(x)) {
                 state.makeMove(x);
-                score = -negaMaxHelper(depth - 1, state.copy(), -who);
+                score = -negaMaxHelper(depth - 1, state, -who);
                 state.unMakeMove();
             }
             else{
