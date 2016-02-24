@@ -39,6 +39,14 @@ public class NegaMaxAI extends AIModule{
         lastDepth = depth-1;
     }
 
+    //A position can be encoded in 2 bits.
+    //We need 2 bits per piece, therefore we need 7*6*2 = 42 bits
+    //Lets try storing it as two longs, one for red one for black
+    public long[] stateToBoard(GameStateModule state){
+        long board[] = {0,0};
+        return board;
+    }
+
     protected int all4sEval(GameStateModule state) {
         if(states.get(state) != null){
             System.out.println("Hash hit");
