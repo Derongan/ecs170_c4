@@ -1,6 +1,6 @@
 import java.util.HashMap;
 
-public class NegaMaxAI extends AIModule{
+public class NegaMaxAIBit extends AIModule{
     protected final int WORST = -10000;
     protected final int BEST = 10000;
 
@@ -13,7 +13,7 @@ public class NegaMaxAI extends AIModule{
 
     private int[] defaultOrder = {3,5,1,0,6,2,4};
 
-    private HashMap<GameStateModule, Integer> states = new HashMap<>();
+    private HashMap<BitBoard, Integer> states = new HashMap<>();
 
     @Override
     public void getNextMove(GameStateModule game) {
@@ -28,26 +28,20 @@ public class NegaMaxAI extends AIModule{
 
         System.out.println("Moving");
 
+        BitBoard board = new BitBoard(game);
+
         while(!terminate){
             //System.out.println("------");
-            move = negaMax(depth, game, 1);
+            move = negaMax(depth, board, 1);
             if(!terminate && move != NOHOPE)
-                chosenMove = move;
+                   chosenMove = move;
             depth++;
         }
         System.out.println(depth);
         lastDepth = depth-1;
     }
 
-    //A position can be encoded in 2 bits.
-    //We need 2 bits per piece, therefore we need 7*6*2 = 42 bits
-    //Lets try storing it as two longs, one for red one for black
-    public long[] stateToBoard(GameStateModule state){
-        long board[] = {0,0};
-        return board;
-    }
-
-    protected int all4sEval(GameStateModule state) {
+    protected int all4sEval(BitBoard state) {
         if(states.get(state) != null){
             System.out.println("Hash hit");
             return states.get(state);
@@ -151,7 +145,7 @@ public class NegaMaxAI extends AIModule{
             return -1;
     }
 
-    protected int threesEval(GameStateModule state){
+    protected int threesEval(BitBoard state){
         int threes = 0;
         for(int row = 0; row < state.getHeight(); row++){
             int cur = 0;
@@ -208,7 +202,7 @@ public class NegaMaxAI extends AIModule{
         return threes;
     }
 
-    protected int connectedEval(GameStateModule state){
+    protected int connectedEval(BitBoard state){
         int con = 0;
         int val;
         int add;
@@ -238,7 +232,7 @@ public class NegaMaxAI extends AIModule{
         return con;
     }
 
-    protected int evaluate(GameStateModule state){
+    protected int evaluate(BitBoard state){
         if(state.getCoins() == 0){
             System.out.println("FIRST MOVE");
             if(state.getAt(4,7) != 0)
@@ -251,7 +245,7 @@ public class NegaMaxAI extends AIModule{
         return 0;
     }
 
-    private int negaMax(int depth, GameStateModule state, int who){
+    private int negaMax(int depth, BitBoard state, int who){
         int max = Integer.MIN_VALUE;
         int score;
 
@@ -288,7 +282,7 @@ public class NegaMaxAI extends AIModule{
         return move;
     }
 
-    private int negaMaxHelper(int depth, GameStateModule state, int who){
+    private int negaMaxHelper(int depth, BitBoard state, int who){
         //This position may be better than a loss
         if(terminate){
             return 42;

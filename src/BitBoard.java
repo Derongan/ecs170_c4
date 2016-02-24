@@ -56,7 +56,7 @@ public class BitBoard{
 
     public void makeMove(int move){
         board[togo&1] ^= 1L<<height[move]++;
-        togo++;
+        moves[togo++] = move;
         played++;
         computeVictory();
     }
@@ -99,11 +99,12 @@ public class BitBoard{
             return;
         }
 
-        winner = 0;
+        if(played == 7*6)
+            winner = 0;
     }
 
-    public long getAt(int x, int y){
-        return (board[0] &  (1L << (x*7+y))) - (board[1] &  (1L << (x*7+y)));
+    public int getAt(int x, int y){
+        return (int)((board[0] &  (1L << (x*7+y))) - (board[1] &  (1L << (x*7+y))));
     }
 
     public int getHeightAt(int x) {
@@ -162,8 +163,10 @@ public class BitBoard{
         b.makeMove(4);
         b.makeMove(3);
         b.makeMove(3);
-        b.makeMove(0);
-        System.out.println(b.getWinner());
         b.display();
+        BitBoard c = b.copy();
+        b.unMakeMove();
+        b.display();
+        c.display();
     }
 }

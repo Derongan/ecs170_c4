@@ -1,9 +1,9 @@
 /**
  * Created by Derongan on 2/23/2016.
  */
-public class NegaMaxTester2 extends NegaMaxAI {
+public class NegaMaxTesterBit2 extends NegaMaxAIBit {
     @Override
-    protected int evaluate(GameStateModule state){
+    protected int evaluate(BitBoard state){
         return all4sEval(state);
     }
 }
