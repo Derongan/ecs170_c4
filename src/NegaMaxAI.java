@@ -40,10 +40,10 @@ public class NegaMaxAI extends AIModule{
     }
 
     protected int all4sEval(GameStateModule state) {
-        if(states.get(state) != null){
+        /*if(states.get(state) != null){
             System.out.println("Hash hit");
             return states.get(state);
-        }
+        }*/
         int val = 0;
         //There are three possible wins in each row
         for (int row = 0; row < state.getHeight(); row++){
@@ -114,7 +114,7 @@ public class NegaMaxAI extends AIModule{
             }
         }
         int rv = val+ 16*formatPlayer(state.getActivePlayer());
-        states.put(state, rv);
+        //states.put(state, rv);
         return rv;
     }
 
@@ -243,7 +243,7 @@ public class NegaMaxAI extends AIModule{
         return 0;
     }
 
-    private int negaMax(int depth, GameStateModule state, int who){
+    public int negaMax(int depth, GameStateModule state, int who){
         int max = Integer.MIN_VALUE;
         int score;
 
@@ -310,5 +310,34 @@ public class NegaMaxAI extends AIModule{
                 max = score;
         }
         return max;
+    }
+
+    public static void main(String[] args){
+
+        //NegaMaxTester1 nb = new NegaMaxTester1();
+        NegaMaxTesterBit1 b = new NegaMaxTesterBit1();
+
+        //nb.terminate = false;
+        b.terminate = false;
+
+        GameState_General g = new GameState_General(7,6);
+
+        GameState_General g1 = g.copy();
+        GameState_General g2 = g.copy();
+        /*
+        long startTime = System.currentTimeMillis();
+        nb.negaMax(8, g1, 1);
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("That took " + (endTime - startTime) + " milliseconds");*/
+
+
+        long startTime = System.currentTimeMillis();
+        BitBoard bb = new BitBoard(g2);
+        int r = b.negaMax(8, bb, 1);
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("That took " + (endTime - startTime) + " milliseconds");
+        System.out.println(r);
     }
 }

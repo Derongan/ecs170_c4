@@ -6,6 +6,6 @@ public class NegaMaxTester1 extends NegaMaxAI {
     }
     @Override
     protected int evaluate(GameStateModule state){
-        return all4sEval(state);
+        return 0;
     }
 }

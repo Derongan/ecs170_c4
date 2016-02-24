@@ -42,10 +42,10 @@ public class NegaMaxAIBit extends AIModule{
     }
 
     protected int all4sEval(BitBoard state) {
-        if(states.get(state) != null){
+        /*if(states.get(state) != null){
             System.out.println("Hash hit");
             return states.get(state);
-        }
+        }*/
         int val = 0;
         //There are three possible wins in each row
         for (int row = 0; row < state.getHeight(); row++){
@@ -116,7 +116,7 @@ public class NegaMaxAIBit extends AIModule{
             }
         }
         int rv = val+ 16*formatPlayer(state.getActivePlayer());
-        states.put(state, rv);
+        //states.put(state, rv);
         return rv;
     }
 
@@ -245,7 +245,7 @@ public class NegaMaxAIBit extends AIModule{
         return 0;
     }
 
-    private int negaMax(int depth, BitBoard state, int who){
+    public int negaMax(int depth, BitBoard state, int who){
         int max = Integer.MIN_VALUE;
         int score;
 
