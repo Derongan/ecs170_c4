@@ -7,6 +7,7 @@ public class NegaMaxAI extends AIModule{
     private int us;
 
     private int lastDepth = 4;
+    protected int startDepth = 1;
 
     private final int NOHOPE = -2000;
 
@@ -21,7 +22,7 @@ public class NegaMaxAI extends AIModule{
 
         chosenMove = 4;
 
-        int depth = 1;
+        int depth = startDepth;
 
         int move;
 
@@ -40,6 +41,7 @@ public class NegaMaxAI extends AIModule{
 
     protected int all4sEval(GameStateModule state) {
         if(states.get(state) != null){
+            System.out.println("Hash hit");
             return states.get(state);
         }
         int val = 0;
