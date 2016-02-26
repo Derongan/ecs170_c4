@@ -7,8 +7,6 @@ public class BitBoard{
     public int moves[] = new int[7*6];
     public int togo = 0;
 
-    int played = 0;
-
     int winner = -1;
 
     public BitBoard(){
@@ -27,14 +25,12 @@ public class BitBoard{
             height[i] = g.getHeightAt(i) + i*7;
         }
 
-        played = g.getCoins();
-        togo = g.getActivePlayer()+1;
+        togo = g.getCoins();
     }
 
     public void unMakeMove(){
         int move = moves[--togo];   //Get column to undo
         board[togo&1] ^= 1L<<--height[move]; //Undo it
-        played--;
         winner = -1;
     }
 
@@ -45,7 +41,6 @@ public class BitBoard{
         b.togo = togo;
         System.arraycopy(height,0, b.height, 0, 7);
         System.arraycopy(moves, 0, b.moves, 0, 7*6);
-        b.played = played;
         b.winner = winner;
         return b;
     }
@@ -57,7 +52,6 @@ public class BitBoard{
     public void makeMove(int move){
         board[togo&1] ^= 1L<<height[move]++;
         moves[togo++] = move;
-        played++;
         computeVictory();
     }
 
@@ -99,12 +93,12 @@ public class BitBoard{
             return;
         }
 
-        if(played == 7*6)
+        if(togo == 42)
             winner = 0;
     }
 
     public int getAt(int x, int y){
-        return (int)((board[0] &  (1L << (x*7+y))) - (board[1] &  (1L << (x*7+y))));
+        return ((int)(((board[0] >>> (7*x + y))&1) - ((board[1] >>> (7*x + y))&1)));
     }
 
     public int getHeightAt(int x) {
@@ -120,7 +114,7 @@ public class BitBoard{
     }
 
     public int getCoins() {
-        return played;
+        return togo;
     }
 
     public void setAt(int x, int y, int who){
@@ -136,7 +130,7 @@ public class BitBoard{
     public void display(){
         for(int i = 5; i >= 0; i--){
             for(int j = 0; j < 7; j++){
-                long piece = getAt(j,i);
+                int piece = getAt(j,i);
                 if(piece > 0)
                     System.out.print("X ");
                 else if (piece < 0)
@@ -149,24 +143,25 @@ public class BitBoard{
         System.out.println();
     }
 
+    @Override
+    public boolean equals(Object o){
+        return (board[0] == ((BitBoard)o).board[0]) && (board[1] == ((BitBoard)o).board[1]) && ((togo&1L) == (((BitBoard)o).togo&1L));
+    }
+
+    @Override
+    public int hashCode(){
+        return (int)(board[0] + board[1] + (togo&1));
+    }
+
     public static void main(String[] args){
-        GameState_General g = new GameState_General(7,6);
-        g.makeMove(0);
-        g.makeMove(1);
-        g.makeMove(0);
-        g.makeMove(1);
-        g.makeMove(0);
-        g.makeMove(1);
-        BitBoard b = new BitBoard(g);
-        b.makeMove(2);
-        b.makeMove(2);
-        b.makeMove(4);
-        b.makeMove(3);
-        b.makeMove(3);
-        b.display();
-        BitBoard c = b.copy();
-        b.unMakeMove();
-        b.display();
-        c.display();
+        BitBoard b = new BitBoard();
+        b.makeMove(0);
+        BitBoard b2 = new BitBoard();
+        b2.makeMove(1);
+
+        for(int i = 0; i < 7; i++) {
+            b.makeMove(i);
+            b.display();
+        }
     }
 }

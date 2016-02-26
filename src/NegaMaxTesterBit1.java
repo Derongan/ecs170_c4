@@ -6,6 +6,6 @@ public class NegaMaxTesterBit1 extends NegaMaxAIBit {
     }
     @Override
     protected int evaluate(BitBoard state){
-        return all4sEval(state);
+        return simpleEval(state); //all4sEval(state);
     }
 }

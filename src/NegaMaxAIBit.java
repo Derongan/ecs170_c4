@@ -13,7 +13,7 @@ public class NegaMaxAIBit extends AIModule{
 
     private int[] defaultOrder = {3,5,1,0,6,2,4};
 
-    private HashMap<BitBoard, Integer> states = new HashMap<>();
+    public HashMap<BitBoard, Integer> states = new HashMap<>();
 
     @Override
     public void getNextMove(GameStateModule game) {
@@ -30,22 +30,36 @@ public class NegaMaxAIBit extends AIModule{
 
         BitBoard board = new BitBoard(game);
 
+        if(board.getCoins() == 0){
+            chosenMove = 3;
+            return;
+        }
+        if(board.getCoins() == 2 && board.getHeightAt(3)==2){
+            chosenMove = 3;
+            return;
+        }
+
         while(!terminate){
             //System.out.println("------");
             move = negaMax(depth, board, 1);
             if(!terminate && move != NOHOPE)
                    chosenMove = move;
             depth++;
+            states.clear();
         }
         System.out.println(depth);
         lastDepth = depth-1;
     }
 
+    public int simpleEval(BitBoard state){
+        int ret;
+        long b = state.board[state.togo&1];
+        long b2 = state.board[(state.togo+1)&1];
+        //Lets simply check vertical 3 in a rows
+        return Long.bitCount(b & (b >> 2)) - Long.bitCount(b2 & (b2 >> 2));
+    }
+
     protected int all4sEval(BitBoard state) {
-        /*if(states.get(state) != null){
-            System.out.println("Hash hit");
-            return states.get(state);
-        }*/
         int val = 0;
         //There are three possible wins in each row
         for (int row = 0; row < state.getHeight(); row++){
@@ -116,7 +130,6 @@ public class NegaMaxAIBit extends AIModule{
             }
         }
         int rv = val+ 16*formatPlayer(state.getActivePlayer());
-        //states.put(state, rv);
         return rv;
     }
 
@@ -145,103 +158,8 @@ public class NegaMaxAIBit extends AIModule{
             return -1;
     }
 
-    protected int threesEval(BitBoard state){
-        int threes = 0;
-        for(int row = 0; row < state.getHeight(); row++){
-            int cur = 0;
-            int cuther = 0;
-            for(int col = 0; col < state.getWidth(); col++){
-                if(state.getAt(col, row) == us) {
-                    cur++;
-                    cuther = 0;
-                }
-                else if(state.getAt(col,row) == 0) {
-                    cur++;
-                    cuther++;
-                }
-                else{
-                    cur = 0;
-                    cuther++;
-                }
-                if(cur >= 3){
-                    threes++;
-                    continue;
-                }
-                if(cuther >= 3){
-                    threes--;
-                }
-            }
-        }
-
-        for(int col = 0; col < state.getWidth(); col++){
-            int cur = 0;
-            int cuther = 0;
-            for(int row = 0; row < state.getHeight(); row++){
-                if(state.getAt(col, row) == us) {
-                    cur++;
-                    cuther = 0;
-                }
-                else if(state.getAt(col,row) == 0) {
-                    cur++;
-                    cuther++;
-                }
-                else{
-                    cur = 0;
-                    cuther++;
-                }
-                if(cur >= 3){
-                    threes++;
-                    continue;
-                }
-                if(cuther >= 3){
-                    threes--;
-                }
-            }
-        }
-
-        return threes;
-    }
-
-    protected int connectedEval(BitBoard state){
-        int con = 0;
-        int val;
-        int add;
-        for(int i = 0; i < state.getWidth(); i++){
-            for(int j = 0; j < state.getHeight(); j++){
-                val = state.getAt(i,j);
-                if(val == us)
-                    add = 1;
-                else
-                    add = -1;
-                if(i+1 < state.getWidth() && state.getAt(i+1,j) == us){
-                    con+=add;
-                }
-                if(j+1 < state.getHeight() && state.getAt(i,j+1) == us){
-                    con+=add;
-                }
-
-                if(j+1 < state.getHeight() && i+1 < state.getWidth() && state.getAt(i+1,j+1) == us) {
-                    con+=add;
-                }
-
-                if(j-1 > 0 && i+1 < state.getWidth() && state.getAt(i+1,j-1) == us) {
-                    con+=add;
-                }
-            }
-        }
-        return con;
-    }
 
     protected int evaluate(BitBoard state){
-        if(state.getCoins() == 0){
-            System.out.println("FIRST MOVE");
-            if(state.getAt(4,7) != 0)
-                return BEST;
-        }
-        else{
-            //connectedEval(state);
-            threesEval(state);
-        }
         return 0;
     }
 
@@ -276,41 +194,50 @@ public class NegaMaxAIBit extends AIModule{
 
         //System.out.println(h);
         if(h == state.getWidth()){
-            System.out.println("Loss");
+            //System.out.println("Loss");
             return NOHOPE;
         }
         return move;
     }
 
     private int negaMaxHelper(int depth, BitBoard state, int who){
-        //This position may be better than a loss
-        if(terminate){
-            return 42;
-        }
-        if(state.isGameOver()){
-            if(state.getWinner() == 0)
-                return 0;
-            else
-                return WORST;
-        }
-        if(depth == 0){
-            return evaluate(state);
-        }
         int max = Integer.MIN_VALUE;
-        int score;
-        for(int i = 0; i < state.getWidth(); i++){
-            int x = defaultOrder[i];
-            if(state.canMakeMove(x)) {
-                state.makeMove(x);
-                score = -negaMaxHelper(depth - 1, state, -who);
-                state.unMakeMove();
-            }
-            else{
-                score = WORST-1;
-            }
-            if(score > max)
-                max = score;
+
+        if(depth > 4 && states.get(state) != null){
+            return states.get(state);
         }
+
+        if(terminate){
+            max =  42;
+        }
+        else if(state.isGameOver()){
+            if(state.getWinner() == 0)
+                max =  0;
+            else
+                max =  WORST;
+        }
+        else if(depth == 0){
+            max = evaluate(state);
+        }
+        else {
+            int score;
+            for (int i = 0; i < state.getWidth(); i++) {
+                int x = defaultOrder[i];
+                if (state.canMakeMove(x)) {
+                    state.makeMove(x);
+                    score = -negaMaxHelper(depth - 1, state, -who);
+                    state.unMakeMove();
+                } else {
+                    score = WORST - 1;
+                }
+                if (score > max)
+                    max = score;
+            }
+        }
+
+        if(depth > 4)
+            states.put(state.copy(), max);
+
         return max;
     }
 }

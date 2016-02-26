@@ -331,13 +331,19 @@ public class NegaMaxAI extends AIModule{
 
         System.out.println("That took " + (endTime - startTime) + " milliseconds");*/
 
+        long diff = 0;
 
-        long startTime = System.currentTimeMillis();
-        BitBoard bb = new BitBoard(g2);
-        int r = b.negaMax(8, bb, 1);
-        long endTime = System.currentTimeMillis();
+        for(int i = 0; i < 20; i++) {
+            long startTime = System.currentTimeMillis();
+            BitBoard bb = new BitBoard(g1);
+            b.states.clear();
+            int r = b.negaMax(9, bb, 1);
+            long endTime = System.currentTimeMillis();
 
-        System.out.println("That took " + (endTime - startTime) + " milliseconds");
-        System.out.println(r);
+            diff += endTime - startTime;
+            System.out.println("DONE");
+        }
+
+        System.out.println("That took " + diff/20.0 + " milliseconds on average");
     }
 }
