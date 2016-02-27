@@ -55,7 +55,7 @@ public class AlphaBetaAI extends AIModule{
         int ret;
         long b = state.board[state.togo&1];
         long b2 = state.board[(state.togo+1)&1];
-        //Lets simply check vertical 3 in a rows
+        //Lets simply check vertical 3 in a rows for both players
         return Long.bitCount(b & (b >> 2)) - Long.bitCount(b2 & (b2 >> 2));
     }
 
