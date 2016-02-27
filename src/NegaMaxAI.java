@@ -333,7 +333,9 @@ public class NegaMaxAI extends AIModule{
 
         long diff = 0;
 
-        for(int i = 0; i < 20; i++) {
+        double n = 100.0;
+
+        for(int i = 0; i < n; i++) {
             long startTime = System.currentTimeMillis();
             BitBoard bb = new BitBoard(g1);
             b.states.clear();
@@ -344,6 +346,6 @@ public class NegaMaxAI extends AIModule{
             System.out.println("DONE");
         }
 
-        System.out.println("That took " + diff/20.0 + " milliseconds on average");
+        System.out.println("That took " + diff/n + " milliseconds on average");
     }
 }
