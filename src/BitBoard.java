@@ -1,3 +1,8 @@
+import com.sun.deploy.util.ArrayUtil;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
  * Created by Derongan on 2/23/2016.
  */
@@ -145,23 +150,43 @@ public class BitBoard{
 
     @Override
     public boolean equals(Object o){
-        return (board[0] == ((BitBoard)o).board[0]) && (board[1] == ((BitBoard)o).board[1]) && ((togo&1L) == (((BitBoard)o).togo&1L));
+        boolean ret = (board[0] == ((BitBoard)o).board[0]) || (flip(board[0]) == flip(((BitBoard)o).board[0]));
+        ret &= (board[1] == ((BitBoard)o).board[1]) || (flip(board[1]) == flip(((BitBoard)o).board[1]));
+        return ret & (board[1] == ((BitBoard)o).board[1]) && ((togo&1L) == (((BitBoard)o).togo&1L));
+    }
+
+    public long flip(long l){
+        long sum = 0;
+        long r = Long.reverse(l) >>> 15;
+        sum |= (r & 0b1000000100000010000001000000100000010000001000000L) >>> 6;
+        sum |= (r & 0b0100000010000001000000100000010000001000000100000L) >>> 4;
+        sum |= (r & 0b0010000001000000100000010000001000000100000010000L) >>> 2;
+        sum |= (r & 0b0001000000100000010000001000000100000010000001000L);
+        sum |= (r & 0b0000100000010000001000000100000010000001000000100L) << 2;
+        sum |= (r & 0b0000010000001000000100000010000001000000100000010L) << 4;
+        return sum;
     }
 
     @Override
     public int hashCode(){
-        return (int)(board[0] + board[1] + (togo&1));
+        return Math.min((int) (board[0] + board[1] + (togo & 1)), (int)(flip(board[0]) + flip(board[1]) + (togo&1)));
     }
 
     public static void main(String[] args){
-        BitBoard b = new BitBoard();
-        b.makeMove(0);
         BitBoard b2 = new BitBoard();
-        b2.makeMove(1);
+        b2.makeMove(0);
+        b2.makeMove(0);
+        b2.makeMove(0);
 
-        for(int i = 0; i < 7; i++) {
-            b.makeMove(i);
-            b.display();
-        }
+        b2.board[0] = 0b0111111001111100011110000111000001100100010000000L;
+        b2.board[1] = 0;
+
+        b2.display();
+
+        b2.board[0] = b2.flip(b2.board[0]);
+
+        b2.display();
+
+        b2.getAt(0,0);
     }
 }
