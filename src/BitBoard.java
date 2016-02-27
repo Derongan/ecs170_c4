@@ -173,20 +173,27 @@ public class BitBoard{
     }
 
     public static void main(String[] args){
-        BitBoard b2 = new BitBoard();
-        b2.makeMove(0);
-        b2.makeMove(0);
-        b2.makeMove(0);
+        BitBoard b = new BitBoard();
 
-        b2.board[0] = 0b0111111001111100011110000111000001100100010000000L;
-        b2.board[1] = 0;
+        AlphaBetaAI ab = new AlphaBetaAI();
+        NegaMaxAIBit nm = new NegaMaxAIBit();
 
-        b2.display();
+        ab.terminate = false;
+        nm.terminate = false;
 
-        b2.board[0] = b2.flip(b2.board[0]);
+        b.makeMove(3);
+        b.makeMove(3);
+        b.makeMove(3);
+        b.makeMove(3);
+        b.makeMove(3);
+        b.makeMove(3);
+        b.makeMove(2);
+        b.makeMove(2);
 
-        b2.display();
+        b.display();
 
-        b2.getAt(0,0);
+
+        System.out.println(ab.negaMaxAB(3,b,1));
+        System.out.println(nm.negaMax(3,b,1));
     }
 }

@@ -11,7 +11,7 @@ public class AlphaBetaAI extends AIModule{
 
     private final int NOHOPE = -2000;
 
-    private int[] defaultOrder = {3,5,1,0,6,2,4};
+    private int[] defaultOrder = {3,2,4,5,1,0,6};
 
     public HashMap<BitBoard, Integer> states = new HashMap<>();
 
@@ -72,11 +72,14 @@ public class AlphaBetaAI extends AIModule{
 
         int h = 0;
 
+        int alpha = Integer.MIN_VALUE;
+        int beta = Integer.MAX_VALUE;
+
         for(int i = 0; i < state.getWidth(); i++){
             int x = defaultOrder[i];
             if(state.canMakeMove(x)) {
                 state.makeMove(x);
-                score = -negaMaxABHelper(depth - 1, state, -who, Integer.MIN_VALUE, Integer.MAX_VALUE);
+                score = -negaMaxABHelper(depth - 1, state, -who, -beta, -alpha);
                 state.unMakeMove();
             }
             else{
@@ -88,6 +91,10 @@ public class AlphaBetaAI extends AIModule{
             }
             if(score <= WORST)
                 h++;
+
+            alpha = Math.max(alpha, score);
+            if (alpha >= beta)
+                break;
         }
 
 

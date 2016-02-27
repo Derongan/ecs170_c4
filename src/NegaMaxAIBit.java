@@ -11,7 +11,7 @@ public class NegaMaxAIBit extends AIModule{
 
     private final int NOHOPE = -2000;
 
-    private int[] defaultOrder = {3,5,1,0,6,2,4};
+    private int[] defaultOrder = {3,2,4,5,1,0,6};
 
     public HashMap<BitBoard, Integer> states = new HashMap<>();
 
