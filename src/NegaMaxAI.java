@@ -315,7 +315,7 @@ public class NegaMaxAI extends AIModule{
     public static void main(String[] args){
 
         //NegaMaxTester1 nb = new NegaMaxTester1();
-        NegaMaxTesterBit1 b = new NegaMaxTesterBit1();
+        AlphaBetaAI b = new AlphaBetaAI();
 
         //nb.terminate = false;
         b.terminate = false;
@@ -339,7 +339,7 @@ public class NegaMaxAI extends AIModule{
             long startTime = System.currentTimeMillis();
             BitBoard bb = new BitBoard(g1);
             b.states.clear();
-            int r = b.negaMax(9, bb, 1);
+            int r = b.negaMaxAB(12, bb, 1);
             long endTime = System.currentTimeMillis();
 
             diff += endTime - startTime;

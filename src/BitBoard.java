@@ -12,6 +12,90 @@ public class BitBoard{
     public int moves[] = new int[7*6];
     public int togo = 0;
 
+    //All 69 possible winning groups
+    public static long[] winGroups = {
+            //4 vertical from 0 row
+            15L,
+            1920L,
+            245760L,
+            31457280L,
+            4026531840L,
+            515396075520L,
+            65970697666560L,
+            //4 vertical from 1
+            30L,
+            3840L,
+            491520L,
+            62914560L,
+            8053063680L,
+            1030792151040L,
+            131941395333120L,
+            //4 vertical from 2
+            60L,
+            7680L,
+            983040L,
+            125829120L,
+            16106127360L,
+            2061584302080L,
+            263882790666240L,
+            //4 horizontal from 0 row
+            2113665L,
+            270549120L,
+            34630287360L,
+            4432676782080L,
+            //4 horizontal from 1
+            4227330L,
+            541098240L,
+            69260574720L,
+            8865353564160L,
+            //4 horizontal from 2
+            8454660L,
+            1082196480L,
+            138521149440L,
+            17730707128320L,
+            //4 horizontal from 3
+            16909320L,
+            2164392960L,
+            277042298880L,
+            35461414256640L,
+            //4 horizontal from 4
+            33818640L,
+            4328785920L,
+            554084597760L,
+            70922828513280L,
+            //4 horizontal from 5(highest)
+            67637280L,
+            8657571840L,
+            1108169195520L,
+            141845657026560L,
+            //Right up diags
+            16843009L,
+            2155905152L,
+            275955859456L,
+            35322350010368L,
+            33686018L,
+            4311810304L,
+            551911718912L,
+            70644700020736L,
+            67372036L,
+            8623620608L,
+            1103823437824L,
+            141289400041472L,
+            //Right down diags
+            2130440L,
+            272696320L,
+            34905128960L,
+            4467856506880L,
+            4260880L,
+            545392640L,
+            69810257920L,
+            8935713013760L,
+            8521760L,
+            1090785280L,
+            139620515840L,
+            17871426027520L
+    };
+
     int winner = -1;
 
     public BitBoard(){
@@ -191,30 +275,23 @@ public class BitBoard{
         return Math.min((int) (board[0] + board[1] + (togo & 1)), (int)(flip(board[0]) + flip(board[1]) + (togo&1)));
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         BitBoard b = new BitBoard();
 
         AlphaBetaAI ab = new AlphaBetaAI();
-        NegaMaxAIBit nm = new NegaMaxAIBit();
-
         ab.terminate = false;
-        nm.terminate = false;
 
-        b.makeMove(3);
-        b.makeMove(3);
-        b.makeMove(2);
-        b.makeMove(4);
-        b.makeMove(4);
-        b.makeMove(4);
-        b.makeMove(3);
-        b.makeMove(3);
-        b.makeMove(3);
+        int tests = 2;
 
+        double td = 0;
 
-        b.display();
+        for(int i = 0; i < tests; i++){
+            long startTime = System.nanoTime();
+            ab.negaMaxAB(10,b,1);
+            long endTime = System.nanoTime();
+            td += endTime-startTime;
+        }
 
-
-        System.out.println(ab.negaMaxAB(2,b,-1));
-        System.out.println(nm.negaMax(2,b,-1));
+        System.out.println("Average of "+String.valueOf(td/(double)tests));
     }
 }

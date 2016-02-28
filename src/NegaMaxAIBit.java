@@ -158,9 +158,52 @@ public class NegaMaxAIBit extends AIModule{
             return -1;
     }
 
+    protected int bitValuate(BitBoard state){
+        long[] wins = BitBoard.winGroups;
+
+        long ourboard = state.board[state.togo&1];
+        long otherboard = state.board[~state.togo&1];
+
+        int ret = 0;
+
+        int sign = 0;
+
+        int count;
+
+        for(long board : wins){
+            //If they are the sole owners of this winslot
+            if((ourboard & board) == 0){
+                count = Long.bitCount(otherboard & board);
+                sign = -1;
+            }
+            //If we are the sole owners of this winslot
+            else if((otherboard & board) == 0){
+                count = Long.bitCount(ourboard & board);
+                sign = 1;
+            }
+            else{
+                continue;
+            }
+            switch(count){
+                case 1:
+                    ret += sign*2;
+                    break;
+                case 2:
+                    ret += sign*10;
+                    break;
+                case 3:
+                    ret += sign*50;
+                    break;
+                case 4:
+                    return sign * BEST;
+            }
+        }
+        return ret;
+    }
+
 
     protected int evaluate(BitBoard state){
-        return 0;
+        return bitValuate(state);
     }
 
     public int negaMax(int depth, BitBoard state, int who){
@@ -194,7 +237,7 @@ public class NegaMaxAIBit extends AIModule{
 
         //System.out.println(h);
         if(h == state.getWidth()){
-            //System.out.println("Loss");
+            System.out.println("Loss");
             return NOHOPE;
         }
         return move;
