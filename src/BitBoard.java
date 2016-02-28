@@ -1,11 +1,3 @@
-import com.sun.deploy.util.ArrayUtil;
-
-import java.util.Arrays;
-import java.util.Collections;
-
-/**
- * Created by Derongan on 2/23/2016.
- */
 public class BitBoard{
     public long board[] = {0L,0L};
     public int height[] = {0,7,14,21,28,35,42};

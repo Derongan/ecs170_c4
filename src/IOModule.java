@@ -8,11 +8,11 @@
 public interface IOModule
 {
     /// Request a move from a human player.
-    public int getHumanMove();
+    int getHumanMove();
     
     /// Call to update the graphics.
     /**
      * @param game State of the game to draw.
      */
-    public void drawBoard(GameStateModule game);
+    void drawBoard(GameStateModule game);
 }

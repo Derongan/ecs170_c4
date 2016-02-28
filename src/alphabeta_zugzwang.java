@@ -51,7 +51,6 @@ public class alphabeta_zugzwang extends AIModule {
                 }
 
             } catch (Exception var6) {
-                ;
             }
             //System.out.println("Max reached depth " + String.valueOf(var2 - 1) + " by player " + String.valueOf(ourPlayer));
 
