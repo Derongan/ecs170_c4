@@ -316,9 +316,11 @@ public class NegaMaxAI extends AIModule{
 
         //NegaMaxTester1 nb = new NegaMaxTester1();
         AlphaBetaAI b = new AlphaBetaAI();
+        AlphaBetaAI c = new AlphaBetaAI();
 
         //nb.terminate = false;
         b.terminate = false;
+        c.terminate = false;
 
         GameState_General g = new GameState_General(7,6);
 
@@ -331,21 +333,46 @@ public class NegaMaxAI extends AIModule{
 
         System.out.println("That took " + (endTime - startTime) + " milliseconds");*/
 
+
+        int depth = 14;
+
+        b.maxDepth = depth;
+        c.maxDepth = depth;
+
         long diff = 0;
 
         double n = 100.0;
 
-        for(int i = 0; i < n; i++) {
+        b.tuning = 7;
+
+        /*for(int i = 0; i < n; i++) {
             long startTime = System.currentTimeMillis();
-            BitBoard bb = new BitBoard(g1);
+            BitBoard bb = new BitBoard();
             b.states.clear();
-            int r = b.negaMaxAB(12, bb, 1);
+            int r = b.negaMaxAB(depth, bb, 1);
             long endTime = System.currentTimeMillis();
 
             diff += endTime - startTime;
-            System.out.println("DONE");
         }
 
         System.out.println("That took " + diff/n + " milliseconds on average");
+
+        diff = 0;*/
+
+
+        for(int j = 0; j < 1; j++) {
+            diff = 0;
+            for (int i = 0; i < n; i++) {
+                long startTime = System.currentTimeMillis();
+                BitBoard bb = new BitBoard();
+                c.states.clear();
+                int r = c.negaMaxAB(depth, bb, 1);
+                long endTime = System.currentTimeMillis();
+
+                diff += endTime - startTime;
+            }
+
+            System.out.println("That took " + diff / n + " milliseconds on average");
+        }
     }
 }

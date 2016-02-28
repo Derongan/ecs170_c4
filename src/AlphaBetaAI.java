@@ -1,6 +1,5 @@
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 
 public class AlphaBetaAI extends AIModule{
     protected final int WORST = -10000;
@@ -11,6 +10,8 @@ public class AlphaBetaAI extends AIModule{
     private int lastDepth = 4;
     protected int startDepth = 1;
 
+    public int tuning = 9;
+
     private final int NOHOPE = -2000;
 
     private final int[] defaultOrder = {3,2,4,5,1,0,6};
@@ -19,7 +20,7 @@ public class AlphaBetaAI extends AIModule{
 
     public final HashMap<BitBoard, Integer> states = new HashMap<>();
 
-    private int maxDepth;
+    public int maxDepth;
 
     public final HashMap<BitBoard, Integer> knownMoves = new HashMap<>();
 
@@ -56,7 +57,7 @@ public class AlphaBetaAI extends AIModule{
 
         BitBoard board = new BitBoard(game);
 
-        //board.display();
+        board.display();
 
         if(knownMoves.get(board) != null){
             chosenMove = knownMoves.get(board);
@@ -74,7 +75,8 @@ public class AlphaBetaAI extends AIModule{
             states.clear();
         }
 
-        System.out.println("Max reached depth "+String.valueOf(depth-1)+" by player "+String.valueOf(us));
+        System.out.println("Max reached depth " + String.valueOf(depth - 1) + " by player " + String.valueOf(us));
+        System.out.println("This means we looked ahead " + String.valueOf((depth - 1) / 2) + " moves");
         lastDepth = depth-1;
     }
 
@@ -124,39 +126,48 @@ public class AlphaBetaAI extends AIModule{
 
         int count;
 
-        for(long board : wins){
+        for(int i = 0; i < BitBoard.winGroups.length; i++){
+            long board = BitBoard.winGroups[i];
             //If they are the sole owners of this winslot
             if((p1b & board) == 0){
                 count = Long.bitCount(p2b & board);
-                sign = 1;
+                sign = -1;
             }
             //If we are the sole owners of this winslot
             else if((p2b & board) == 0){
                 count = Long.bitCount(p1b & board);
-                sign = -1;
+                sign = 1;
             }
             else{
                 continue;
             }
-            switch(count){
+
+            switch (count) {
                 case 1:
-                    ret += sign*2;
+                    ret += sign * 2;
                     break;
                 case 2:
-                    ret += sign*10;
+                    ret += sign * 10;
                     break;
                 case 3:
-                    ret += sign*50;
+                    ret += sign * 50;
                     break;
                 case 4:
                     return sign * BEST;
             }
         }
-        return -ret;
+
+        return ret;
+    }
+
+    protected int threatEval(BitBoard state){
+        BitBoard threatBoard = state.findThreats();
+        threatBoard.display();
+        return 0;
     }
 
     protected int evaluate(BitBoard state){
-        return bitValuate(state);
+        return threatEval(state);
     }
 
     public int negaMaxAB(int depth, BitBoard state, int who){
@@ -172,11 +183,16 @@ public class AlphaBetaAI extends AIModule{
         int alpha = WORST;
         int beta = BEST;
 
+
         for(int i = 0; i < state.getWidth(); i++){
             int x = defaultOrder[i];
             if(state.canMakeMove(x)) {
+                if(x == 1){
+                    int t = 1;
+                }
                 state.makeMove(x);
                 score = -negaMaxABHelper(depth - 1, state, -who, -beta, -alpha);
+                //System.out.println(score+" "+x);
                 state.unMakeMove();
             }
             else{
@@ -204,9 +220,9 @@ public class AlphaBetaAI extends AIModule{
     private int negaMaxABHelper(int depth, BitBoard state, int who, int alpha, int beta){
         int max = WORST;
 
-        /*if(depth > 4 && states.get(state) != null){
+        if(depth + tuning > maxDepth && states.get(state) != null){
             return states.get(state);
-        }*/
+        }
 
         //The column that was best
         int bestMove = 0;
@@ -218,12 +234,10 @@ public class AlphaBetaAI extends AIModule{
             return 0;
         }
         else if(state.isGameOver()){
-            if(state.getWinner2() == 0)
+            if(state.getWinner() == 0)
                 max =  0;
-            else if(state.getWinner2() == who)
-                max = BEST;
             else
-                max = WORST;
+                max = state.getWinner() == us ? BEST : WORST;
         }
         else if(depth == 0){
             max = who*evaluate(state);
@@ -249,8 +263,8 @@ public class AlphaBetaAI extends AIModule{
             }
         }
 
-        /*if(depth > 4)
-            states.put(state.copy(), max);*/
+        if (depth + tuning > maxDepth)
+            states.put(state.copy(), max);
 
         bestAtLevel[maxDepth-depth] = bestMove;
 

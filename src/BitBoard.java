@@ -39,7 +39,7 @@ public class BitBoard{
             2061584302080L,
             263882790666240L,
             //4 horizontal from 0 row
-            2113665L,
+            2113665L,                   //21
             270549120L,
             34630287360L,
             4432676782080L,
@@ -259,9 +259,13 @@ public class BitBoard{
 
     @Override
     public boolean equals(Object o){
-        boolean ret = (board[0] == ((BitBoard)o).board[0]) || (flip(board[0]) == flip(((BitBoard)o).board[0]));
-        ret &= (board[1] == ((BitBoard)o).board[1]) || (flip(board[1]) == flip(((BitBoard)o).board[1]));
-        return ret & (board[1] == ((BitBoard)o).board[1]) && ((togo&1L) == (((BitBoard)o).togo&1L));
+
+       /* boolean ret = (board[0] == ((BitBoard)o).board[0]) || (board[0] == flip(((BitBoard)o).board[0]));
+        ret &= (board[1] == ((BitBoard)o).board[1]) || (board[1] == flip(((BitBoard)o).board[1]));
+        return ret && ((togo&1L) == (((BitBoard)o).togo&1L));*/
+
+
+        return board[0] == ((BitBoard)o).board[0] && board[1] == ((BitBoard)o).board[1] && togo == ((BitBoard)o).togo;
     }
 
     public long flip(long l){
@@ -276,9 +280,34 @@ public class BitBoard{
         return sum;
     }
 
+    public BitBoard findThreats(){
+        BitBoard threats = new BitBoard();
+        for(int i = 0; i < BitBoard.winGroups.length; i++){
+            long b = BitBoard.winGroups[i];
+            //If they are the sole owners of this winslot
+            if((board[0] & b) == 0){
+                if(Long.bitCount(board[1] & b) == 3){
+                    threats.board[1] |= ~board[1] & b;
+                }
+            }
+            //If we are the sole owners of this winslot
+            else if((board[1] & b) == 0){
+                if(Long.bitCount(board[0] & b) == 3){
+                    threats.board[0] |= ~board[0] & b;
+                }
+            }
+            else{
+                continue;
+            }
+        }
+
+        return threats;
+    }
+
     @Override
     public int hashCode(){
-        return Math.min((int) (board[0] + board[1] + (togo & 1)), (int)(flip(board[0]) + flip(board[1]) + (togo&1)));
+        return (int)(board[0] + board[1] + (togo & 1));
+        //return Math.min((int) (board[0] + board[1] + (togo & 1)), (int)(flip(board[0]) + flip(board[1]) + (togo&1)));
     }
 
     public static void main(String[] args) {
@@ -286,20 +315,21 @@ public class BitBoard{
 
         AlphaBetaAI ab = new AlphaBetaAI();
         ab.terminate = false;
+        ab.maxDepth = 18;
 
-        b.makeMove(1);
-        b.makeMove(1);
-        b.makeMove(2);
-        b.makeMove(2);
-        b.makeMove(3);
-        b.makeMove(3);
-        b.makeMove(3);
-        b.makeMove(4);
+        String moves = "4444433331677771376611166355";
+
+        for(int i = 0; i < moves.length(); i++){
+            b.makeMove(Character.getNumericValue(moves.charAt(i))-1);
+        }
+
 
         b.display();
 
-        b.isGameOver();
+        //System.out.println(ab.negaMaxAB(ab.maxDepth, b, 1));
 
-        System.out.println(ab.negaMaxAB(1,b,-1));
+        //b.makeMove(4);
+
+        System.out.println((ab.threatEval(b)));
     }
 }

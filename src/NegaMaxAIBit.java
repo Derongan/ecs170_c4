@@ -203,7 +203,9 @@ public class NegaMaxAIBit extends AIModule{
 
 
     protected int evaluate(BitBoard state){
-        return bitValuate(state);
+        if(us == 2)
+            return bitValuate(state);
+        return 0;
     }
 
     public int negaMax(int depth, BitBoard state, int who){
