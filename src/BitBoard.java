@@ -268,7 +268,7 @@ public class BitBoard{
         return board[0] == ((BitBoard)o).board[0] && board[1] == ((BitBoard)o).board[1] && togo == ((BitBoard)o).togo;
     }
 
-    public long flip(long l){
+    public static long flip(long l){
         long sum = 0;
         long r = Long.reverse(l) >>> 15;
         sum |= (r & 0b1000000100000010000001000000100000010000001000000L) >>> 6;
@@ -327,19 +327,21 @@ public class BitBoard{
 
         AlphaBetaAI ab = new AlphaBetaAI();
         ab.terminate = false;
-        ab.maxDepth = 4;
 
-        String moves = "443355321614244";
+        String moves = "44444333";
 
         for(int i = 0; i < moves.length(); i++){
             b.makeMove(Character.getNumericValue(moves.charAt(i))-1);
-            g.makeMove(Character.getNumericValue(moves.charAt(i))-1);
+            g.makeMove(Character.getNumericValue(moves.charAt(i)) - 1);
         }
 
 
         b.display();
 
-        System.out.println(ab.negaMaxAB(ab.maxDepth, b, -1));
+
+        System.out.println();
+
+        System.out.println(ab.negaMaxAB(12, b, 1)+1);
 
         //b.makeMove(4);
 

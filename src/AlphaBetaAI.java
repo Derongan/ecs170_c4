@@ -45,7 +45,7 @@ public class AlphaBetaAI extends AIModule{
         states.clear();
         us = game.getActivePlayer();
 
-        Arrays.fill(bestAtLevel, -1);
+        //Arrays.fill(bestAtLevel, -1);
 
         chosenMove = 4;
 
@@ -66,9 +66,12 @@ public class AlphaBetaAI extends AIModule{
 
         int who = board.getActivePlayer() == 2 ? -1 : 1;
 
+
         while(!terminate){
             //System.out.println("------");
             move = negaMaxAB(depth, board, who);
+            //System.out.println("AT depth "+depth+" move " + move + " was chosen" +" who" + who);
+            //board.display();
             if(!terminate && move != NOHOPE)
                 chosenMove = move;
             depth++;
@@ -271,6 +274,8 @@ public class AlphaBetaAI extends AIModule{
         if(h == state.getWidth()){
             return NOHOPE;
         }
+
+        //System.out.println("Finished "+depth);
         return move;
     }
 
