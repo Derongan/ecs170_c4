@@ -72,8 +72,8 @@ public class AlphaBetaAI extends AIModule{
 
         int h = 0;
 
-        int alpha = Integer.MIN_VALUE;
-        int beta = Integer.MAX_VALUE;
+        int alpha = WORST-1;
+        int beta = BEST+1;
 
         for(int i = 0; i < state.getWidth(); i++){
             int x = defaultOrder[i];
@@ -107,9 +107,9 @@ public class AlphaBetaAI extends AIModule{
     private int negaMaxABHelper(int depth, BitBoard state, int who, int alpha, int beta){
         int max = Integer.MIN_VALUE;
 
-        /*if(depth > 4 && states.get(state) != null){
-            return states.get(state);
-        }*/
+        if(depth == 3){
+            int t = 0;
+        }
 
         if(terminate){
             max =  42;

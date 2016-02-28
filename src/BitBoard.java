@@ -148,6 +148,25 @@ public class BitBoard{
         System.out.println();
     }
 
+    public String repr(){
+        StringBuilder builder = new StringBuilder();
+        for(int i = 5; i >= 0; i--){
+            for(int j = 0; j < 7; j++){
+                int piece = getAt(j,i);
+                if(piece > 0)
+                    builder.append("X ");
+                else if (piece < 0)
+                    builder.append("O ");
+                else
+                    builder.append("_ ");
+            }
+            builder.append('\n');
+        }
+        builder.append('\n');
+
+        return builder.toString();
+    }
+
     @Override
     public boolean equals(Object o){
         boolean ret = (board[0] == ((BitBoard)o).board[0]) || (flip(board[0]) == flip(((BitBoard)o).board[0]));
@@ -183,17 +202,13 @@ public class BitBoard{
 
         b.makeMove(3);
         b.makeMove(3);
-        b.makeMove(3);
-        b.makeMove(3);
-        b.makeMove(3);
-        b.makeMove(3);
         b.makeMove(2);
-        b.makeMove(2);
+
 
         b.display();
 
 
-        System.out.println(ab.negaMaxAB(3,b,1));
-        System.out.println(nm.negaMax(3,b,1));
+        System.out.println(ab.negaMaxAB(4,b,-1));
+        System.out.println(nm.negaMax(4,b,-1));
     }
 }
