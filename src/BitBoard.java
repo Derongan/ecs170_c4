@@ -304,6 +304,15 @@ public class BitBoard{
         return threats;
     }
 
+    public void removeUselessThreats(){
+        long b0 = board[0];
+        long b1 = board[1];
+
+        //Remove some empty threats
+        board[1] = ((b0 << 1) ^ b1) & 279258638311359L; //Long representing full board
+        board[0] = ((b1 << 1) ^ b0) & 279258638311359L;
+    }
+
     @Override
     public int hashCode(){
         return (int)(board[0] + board[1] + (togo & 1));
@@ -312,24 +321,28 @@ public class BitBoard{
 
     public static void main(String[] args) {
         BitBoard b = new BitBoard();
+        GameState_General g = new GameState_General(7,6);
+        alphabeta_zugzwang zz = new alphabeta_zugzwang();
+        zz.terminate = false;
 
         AlphaBetaAI ab = new AlphaBetaAI();
         ab.terminate = false;
-        ab.maxDepth = 18;
+        ab.maxDepth = 4;
 
-        String moves = "4444433331677771376611166355";
+        String moves = "443355321614244";
 
         for(int i = 0; i < moves.length(); i++){
             b.makeMove(Character.getNumericValue(moves.charAt(i))-1);
+            g.makeMove(Character.getNumericValue(moves.charAt(i))-1);
         }
 
 
         b.display();
 
-        //System.out.println(ab.negaMaxAB(ab.maxDepth, b, 1));
+        System.out.println(ab.negaMaxAB(ab.maxDepth, b, -1));
 
         //b.makeMove(4);
 
-        System.out.println((ab.threatEval(b)));
+        System.out.println(ab.evaluate(b));
     }
 }

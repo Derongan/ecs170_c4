@@ -7,8 +7,8 @@ public class AlphaBetaAI extends AIModule{
 
     private int us;
 
-    private int lastDepth = 4;
-    protected int startDepth = 1;
+    private int lastDepth = 1;
+    protected int startDepth = 8;
 
     public int tuning = 9;
 
@@ -53,11 +53,11 @@ public class AlphaBetaAI extends AIModule{
 
         int move;
 
-        System.out.println("Moving");
+        //System.out.println("Moving");
 
         BitBoard board = new BitBoard(game);
 
-        board.display();
+        //board.display();
 
         if(knownMoves.get(board) != null){
             chosenMove = knownMoves.get(board);
@@ -75,8 +75,8 @@ public class AlphaBetaAI extends AIModule{
             states.clear();
         }
 
-        System.out.println("Max reached depth " + String.valueOf(depth - 1) + " by player " + String.valueOf(us));
-        System.out.println("This means we looked ahead " + String.valueOf((depth - 1) / 2) + " moves");
+        //System.out.println("Max reached depth " + String.valueOf(depth - 1) + " by player " + String.valueOf(us));
+        //System.out.println("This means we looked ahead " + String.valueOf((depth - 1) / 2) + " moves");
         lastDepth = depth-1;
     }
 
@@ -142,19 +142,7 @@ public class AlphaBetaAI extends AIModule{
                 continue;
             }
 
-            switch (count) {
-                case 1:
-                    ret += sign * 2;
-                    break;
-                case 2:
-                    ret += sign * 10;
-                    break;
-                case 3:
-                    ret += sign * 50;
-                    break;
-                case 4:
-                    return sign * BEST;
-            }
+            ret += sign*(2 << count);
         }
 
         return ret;
@@ -162,12 +150,81 @@ public class AlphaBetaAI extends AIModule{
 
     protected int threatEval(BitBoard state){
         BitBoard threatBoard = state.findThreats();
-        threatBoard.display();
-        return 0;
+
+        long b0 = threatBoard.board[0];
+        long b1 = threatBoard.board[1];
+
+
+        long even0 = threatBoard.board[0] &186172425540906L;
+        long even1 = threatBoard.board[1] &186172425540906L;
+        long odd0 = threatBoard.board[0] & 93086212770453L; //Odd
+        long odd1 = threatBoard.board[1] & 93086212770453L; //Odd
+        //threatBoard.display();
+
+        int ret = 20*(Long.bitCount(even0) - Long.bitCount(even1)) + 20*(Long.bitCount(odd0) - Long.bitCount(odd1));
+
+        //threatBoard.display();
+        //System.out.println("Moves left: "+(42-state.togo));
+
+        //Check threat polarity
+        /*threatBoard.board[0] &
+        */
+        int max;
+
+        //If there are an even number of moves to go it must be Player 1s turn
+        int r = (42-state.togo)%2;
+            //Check if this player can win
+
+        max = Long.bitCount(threatBoard.board[r]);  //Number of threats we have
+        int ts = 0;
+        for(int i = 0; i < max; i++) {    //For every thread
+            int shift = Long.numberOfTrailingZeros(threatBoard.board[r]);
+            threatBoard.board[r] >>= shift;
+            ts += shift;
+            int x = ts/7;
+            int y = ts%7;
+            if(state.getHeightAt(x) == y){
+                    return BEST * (r == 0 ? 1 : -1);
+            }
+            ts++;
+            threatBoard.board[r] >>= 1;
+        }
+        return ret;
+    }
+
+    protected int oddEvenEval(BitBoard state){
+        BitBoard threatBoard = state.findThreats();
+
+        //threatBoard.display();
+
+        long even0 = threatBoard.board[0] &186172425540906L;
+        long even1 = threatBoard.board[1] &186172425540906L;
+        long odd0 = threatBoard.board[0] & 93086212770453L; //Odd
+        long odd1 = threatBoard.board[1] & 93086212770453L; //Odd
+
+        int good0 = 0;
+        int good1 = 0;
+
+        for(int i = 0; i < 7; i++){ //For each column
+            long odd = odd0 & (0b111111 << (7*i));
+            long even = even1 & (0b111111 << (7*i));
+
+            //If we have an odd threat and there is no even threat from the other player below us
+            if(odd > 0 && (even == 0 || Long.numberOfTrailingZeros(odd) < Long.numberOfTrailingZeros(even))){
+                good0++;
+            }
+
+            //If they have an even threat and there is no odd threat from the other player below them
+            if(even > 0 && (odd == 0 || Long.numberOfTrailingZeros(even) < Long.numberOfTrailingZeros(odd))){
+                good1++;
+            }
+        }
+
+        return (good0 - good1)*100;
     }
 
     protected int evaluate(BitBoard state){
-        return threatEval(state);
+        return oddEvenEval(state) + bitValuate(state) + threatEval(state);
     }
 
     public int negaMaxAB(int depth, BitBoard state, int who){
@@ -237,7 +294,9 @@ public class AlphaBetaAI extends AIModule{
             if(state.getWinner() == 0)
                 max =  0;
             else
-                max = state.getWinner() == us ? BEST : WORST;
+                //max = state.getWinner() == us ? BEST : WORST;
+                max = who * (state.getWinner() == 1 ? BEST : WORST);
+
         }
         else if(depth == 0){
             max = who*evaluate(state);
