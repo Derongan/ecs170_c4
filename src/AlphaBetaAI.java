@@ -7,8 +7,9 @@ public class AlphaBetaAI extends AIModule{
 
     private int us;
 
-    private int lastDepth = 1;
+
     protected int startDepth = 8;
+    private int lastDepth = startDepth +2;
 
     public int tuning = 9;
 
@@ -49,7 +50,7 @@ public class AlphaBetaAI extends AIModule{
 
         chosenMove = 4;
 
-        int depth = startDepth;
+        int depth = lastDepth-2;
 
         int move;
 
@@ -78,7 +79,7 @@ public class AlphaBetaAI extends AIModule{
             states.clear();
         }
 
-        //System.out.println("Max reached depth " + String.valueOf(depth - 1) + " by player " + String.valueOf(us));
+        System.out.println("Max reached depth " + String.valueOf(depth - 1) + " by player " + String.valueOf(us));
         //System.out.println("This means we looked ahead " + String.valueOf((depth - 1) / 2) + " moves");
         lastDepth = depth-1;
     }

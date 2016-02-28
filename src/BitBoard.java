@@ -260,9 +260,12 @@ public class BitBoard{
     @Override
     public boolean equals(Object o){
 
-       /* boolean ret = (board[0] == ((BitBoard)o).board[0]) || (board[0] == flip(((BitBoard)o).board[0]));
+        /*boolean ret = (board[0] == ((BitBoard)o).board[0]) || (board[0] == flip(((BitBoard)o).board[0]));
         ret &= (board[1] == ((BitBoard)o).board[1]) || (board[1] == flip(((BitBoard)o).board[1]));
         return ret && ((togo&1L) == (((BitBoard)o).togo&1L));*/
+
+        //Improved equals
+        //return board[0] == ((BitBoard)o).board[0] && Arrays.equals(height, ((BitBoard)o).height);
 
 
         return board[0] == ((BitBoard)o).board[0] && board[1] == ((BitBoard)o).board[1] && togo == ((BitBoard)o).togo;
@@ -338,13 +341,10 @@ public class BitBoard{
 
         b.display();
 
-
-        System.out.println();
-
-        System.out.println(ab.negaMaxAB(12, b, 1)+1);
+        //System.out.println(ab.negaMaxAB(12, b, 1)+1);
 
         //b.makeMove(4);
 
-        System.out.println(ab.evaluate(b));
+        //System.out.println(ab.evaluate(b));
     }
 }

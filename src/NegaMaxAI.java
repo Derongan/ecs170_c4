@@ -334,7 +334,7 @@ public class NegaMaxAI extends AIModule{
         System.out.println("That took " + (endTime - startTime) + " milliseconds");*/
 
 
-        int depth = 14;
+        int depth = 10;
 
         b.maxDepth = depth;
         c.maxDepth = depth;
