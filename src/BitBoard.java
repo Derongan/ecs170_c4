@@ -148,6 +148,12 @@ public class BitBoard{
         return winner;
     }
 
+    public int getWinner2(){
+        if(winner == 0)
+            return 0;
+        return winner == 2 ? -1 : 1;
+    }
+
     public int getActivePlayer() {
         return (togo&1) == 1L ? 2 : 1;
     }
@@ -281,17 +287,19 @@ public class BitBoard{
         AlphaBetaAI ab = new AlphaBetaAI();
         ab.terminate = false;
 
-        int tests = 2;
+        b.makeMove(1);
+        b.makeMove(1);
+        b.makeMove(2);
+        b.makeMove(2);
+        b.makeMove(3);
+        b.makeMove(3);
+        b.makeMove(3);
+        b.makeMove(4);
 
-        double td = 0;
+        b.display();
 
-        for(int i = 0; i < tests; i++){
-            long startTime = System.nanoTime();
-            ab.negaMaxAB(10,b,1);
-            long endTime = System.nanoTime();
-            td += endTime-startTime;
-        }
+        b.isGameOver();
 
-        System.out.println("Average of "+String.valueOf(td/(double)tests));
+        System.out.println(ab.negaMaxAB(1,b,-1));
     }
 }
