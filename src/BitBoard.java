@@ -203,12 +203,18 @@ public class BitBoard{
         b.makeMove(3);
         b.makeMove(3);
         b.makeMove(2);
+        b.makeMove(4);
+        b.makeMove(4);
+        b.makeMove(4);
+        b.makeMove(3);
+        b.makeMove(3);
+        b.makeMove(3);
 
 
         b.display();
 
 
-        System.out.println(ab.negaMaxAB(4,b,-1));
-        System.out.println(nm.negaMax(4,b,-1));
+        System.out.println(ab.negaMaxAB(2,b,-1));
+        System.out.println(nm.negaMax(2,b,-1));
     }
 }
