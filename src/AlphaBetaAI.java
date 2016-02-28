@@ -1,5 +1,6 @@
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class AlphaBetaAI extends AIModule{
@@ -23,6 +24,8 @@ public class AlphaBetaAI extends AIModule{
     public void getNextMove(GameStateModule game) {
         states.clear();
         us = game.getActivePlayer();
+
+        Arrays.fill(bestAtLevel, -1);
 
         chosenMove = 4;
 
@@ -65,6 +68,28 @@ public class AlphaBetaAI extends AIModule{
     }
 
     public int[] order(int depth){
+        /*if(bestAtLevel[depth] == -1)
+            return defaultOrder;
+
+        int x = bestAtLevel[depth];
+
+        int[] ordering = new int[7];
+
+        //Set first to one that prunes best
+        ordering[0] = x;
+
+        //Place to take from our default array
+        int pos = 0;
+
+        //For position 1 to 6
+        for(int i = 1; i < 7; i++){
+            //If our default array at i is the best, we already inserted it so skip!
+            if(x == defaultOrder[pos])
+                pos++;
+            ordering[i] = defaultOrder[pos];
+            pos++;
+        }*/
+        //return orering
         return defaultOrder;
     }
 
