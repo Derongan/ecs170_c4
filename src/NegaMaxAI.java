@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class NegaMaxAI extends AIModule{
@@ -313,66 +314,49 @@ public class NegaMaxAI extends AIModule{
     }
 
     public static void main(String[] args){
-
-        //NegaMaxTester1 nb = new NegaMaxTester1();
-        AlphaBetaAI b = new AlphaBetaAI();
-        AlphaBetaAI c = new AlphaBetaAI();
-
-        //nb.terminate = false;
-        b.terminate = false;
-        c.terminate = false;
-
-        GameState_General g = new GameState_General(7,6);
-
-        GameState_General g1 = g.copy();
-        GameState_General g2 = g.copy();
-        /*
-        long startTime = System.currentTimeMillis();
-        nb.negaMax(8, g1, 1);
-        long endTime = System.currentTimeMillis();
-
-        System.out.println("That took " + (endTime - startTime) + " milliseconds");*/
-
-
         int depth = 10;
-
-        b.maxDepth = depth;
-        c.maxDepth = depth;
-
-        long diff = 0;
 
         double n = 100.0;
 
-        b.tuning = 7;
+        int[] cacheSizes = {
+                1048573,
+                524288,
+                262144,
+                131072,
+                65537,
+                32771,
+                16384,
+                8192,
+                4096,
+                2048,
+                0
+        };
 
-        /*for(int i = 0; i < n; i++) {
-            long startTime = System.currentTimeMillis();
-            BitBoard bb = new BitBoard();
-            b.states.clear();
-            int r = b.negaMaxAB(depth, bb, 1);
-            long endTime = System.currentTimeMillis();
-
-            diff += endTime - startTime;
-        }
-
-        System.out.println("That took " + diff/n + " milliseconds on average");
-
-        diff = 0;*/
+        BitBoard bb = new BitBoard();
+        bb.makeMove(3);
+        bb.makeMove(3);
+        bb.makeMove(3);
+        bb.makeMove(3);
+        bb.makeMove(3);
+        bb.makeMove(2);
 
 
-        for(int j = 0; j < 1; j++) {
-            diff = 0;
+        for(int j : cacheSizes) {
+            long diff = 0;
+            AlphaBetaAI c = new AlphaBetaAI(j);
+            c.terminate = false;
+            c.maxDepth = depth;
             for (int i = 0; i < n; i++) {
                 long startTime = System.currentTimeMillis();
-                BitBoard bb = new BitBoard();
-                c.states.clear();
+                //c.states.clear();
+                Arrays.fill(c.bestAtLevel, 0);
                 int r = c.negaMaxAB(depth, bb, 1);
                 long endTime = System.currentTimeMillis();
 
                 diff += endTime - startTime;
             }
 
-            System.out.println("That took " + diff / n + " milliseconds on average");
+            System.out.println("That took " + diff / n + " milliseconds on average for cache size "+j);
         }
     }
 }

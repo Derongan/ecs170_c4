@@ -4,6 +4,19 @@ public class BitBoard{
     public int moves[] = new int[7*6];
     public int togo = 0;
 
+
+    static final int WIDTH = 7;
+    static final int HEIGHT = 6;
+
+    static final int H1 = HEIGHT+1;
+    static final int H2 = HEIGHT+2;
+    static final int SIZE = HEIGHT*WIDTH;
+    static final int SIZE1 = H1*WIDTH;
+    static final long ALL1 = (1L<<SIZE1)-1L; // assumes SIZE1 < 63
+    static final int COL1 = (1<<H1)-1;
+    static final long BOTTOM = ALL1 / COL1; // has bits i*H1 set
+    static final long TOP = BOTTOM << HEIGHT;
+
     //All 69 possible winning groups
     public static long[] winGroups = {
             //4 vertical from 0 row
@@ -92,6 +105,15 @@ public class BitBoard{
 
     public BitBoard(){
 
+
+
+    }
+
+    public long positioncode()
+    {
+        return 2*board[0] + board[1] + BOTTOM;
+// color[0] + color[1] + BOTTOM forms bitmap of heights
+// so that positioncode() is a complete board encoding
     }
 
     public BitBoard(GameStateModule g){
@@ -260,7 +282,7 @@ public class BitBoard{
         //return board[0] == ((BitBoard)o).board[0] && Arrays.equals(height, ((BitBoard)o).height);
 
 
-        return board[0] == ((BitBoard)o).board[0] && board[1] == ((BitBoard)o).board[1] && togo == ((BitBoard)o).togo;
+        return board[0] == ((BitBoard)o).board[0] && board[1] == ((BitBoard)o).board[1];
     }
 
     public static long flip(long l){
@@ -299,13 +321,14 @@ public class BitBoard{
         return threats;
     }
 
+    //NOT WORKING!! IGNORES CASE WHERE THREATS ARE IN SAME SLOT
     public void removeUselessThreats(){
         long b0 = board[0];
         long b1 = board[1];
 
         //Remove some empty threats
-        board[1] = ((b0 << 1) ^ b1) & 279258638311359L; //Long representing full board
-        board[0] = ((b1 << 1) ^ b0) & 279258638311359L;
+        board[1] = (((b0 << 1) ^ b1) & 279258638311359L)&b1; //Long representing full board
+        board[0] = (((b1 << 1) ^ b0) & 279258638311359L)&b0;
     }
 
     @Override
@@ -323,17 +346,26 @@ public class BitBoard{
         AlphaBetaAI ab = new AlphaBetaAI();
         ab.terminate = false;
 
-        String moves = "44444333";
+        String moves = "444443333311115555676655121234266";
 
         for(int i = 0; i < moves.length(); i++){
             b.makeMove(Character.getNumericValue(moves.charAt(i))-1);
             g.makeMove(Character.getNumericValue(moves.charAt(i)) - 1);
         }
 
-
         b.display();
+        b.findThreats().display();
 
-        //System.out.println(ab.negaMaxAB(12, b, 1)+1);
+        System.out.println(ab.smartEvaluate(b));
+//
+//        for(int i = 0; i < 7; i++){
+//            b.makeMove(i);
+//            System.out.println(ab.bitValuate(b)+ab.smartEvaluate(b));
+//            b.unMakeMove();
+//        }
+
+        //ab.states.clear();
+        //System.out.println(ab.negaMaxAB(12, b, 1) + 1);
 
         //b.makeMove(4);
 

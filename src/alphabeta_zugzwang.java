@@ -88,144 +88,155 @@ public class alphabeta_zugzwang extends AIModule {
         }
     }
 
-    public int utility(GameStateModule var1) {
+    public int utility(GameStateModule state) {
         if(this.terminate) {
             throw new RuntimeException("Out of time");
         } else {
-            int var2 = 0;
-            if(var1.isGameOver()) {
-                return var1.getWinner() == this.ourPlayer?99999:(var1.getWinner() != 0?-99999:0);
+            int util = 0;
+            if(state.isGameOver()) {
+                return state.getWinner() == this.ourPlayer?99999:(state.getWinner() != 0?-99999:0);
             } else {
-                int var3 = var1.getActivePlayer();
-                int[][] var4 = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
-                int[][][] var5 = this.winningLines;
-                int var6 = var5.length;
+                int who = state.getActivePlayer();
+                int[][] board = new int[][]{{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+                int[][][] winningpositions = this.winningLines;
+                int numberWinningPositions = winningpositions.length;
 
-                int var7;
-                int var9;
-                int var12;
-                for(var7 = 0; var7 < var6; ++var7) {
-                    int[][] var8 = var5[var7];
-                    var9 = 0;
-                    int var10 = 0;
-                    int var11 = 0;
-                    var12 = 0;
-                    int[][] var13 = var8;
-                    int var14 = var8.length;
+                int i;
+                int ours;
+                int y;
+                for(i = 0; i < numberWinningPositions; ++i) {
+                    int[][] winpos = winningpositions[i];
+                    ours = 0;
+                    int theirs = 0;
+                    int x = 0;
+                    y = 0;
+                    int[][] winpos2 = winpos;
+                    int willBe4 = winpos.length;
 
-                    for(int var15 = 0; var15 < var14; ++var15) {
-                        int[] var16 = var13[var15];
-                        int var17 = var1.getAt(var16[0], var16[1]);
-                        if(var17 == this.ourPlayer) {
-                            ++var9;
-                        } else if(var17 != 0) {
-                            ++var10;
+
+                    //Find the threat location
+                    for(int j = 0; j < willBe4; ++j) {
+                        int[] squareLoc = winpos2[j];
+                        int playerNum = state.getAt(squareLoc[0], squareLoc[1]);
+                        if(playerNum == this.ourPlayer) {
+                            ++ours;
+                        } else if(playerNum != 0) {
+                            ++theirs;
                         } else {
-                            var11 = var16[0];
-                            var12 = var16[1];
+                            x = squareLoc[0];
+                            y = squareLoc[1];
                         }
                     }
 
-                    if(var9 <= 0 || var10 <= 0) {
-                        if(var9 == 3) {
-                            if(var12 > 0 && var1.getAt(var11, var12 - 1) == 0) {
-                                if(var4[var11][var12] == this.opponent) {
-                                    var4[var11][var12] = 3;
+                    //If only one of us controls this win position
+                    if(ours <= 0 || theirs <= 0) {
+                        //If we control it
+                        if(ours == 3) {
+                            if(y > 0 && state.getAt(x, y - 1) == 0) {
+                                if(board[x][y] == this.opponent) {
+                                    board[x][y] = 3;
                                 } else {
-                                    var4[var11][var12] = this.ourPlayer;
+                                    board[x][y] = this.ourPlayer;
                                 }
 
+                                //If we are first player we want odd! Otherwise we want Even!
                                 if(this.ourPlayer == 1) {
-                                    if(var12 % 2 == 0) {
-                                        var2 += 10;
+                                    if(y % 2 == 0) {
+                                        util += 10; //If its odd we can probably take it if we are p1
                                     }
-                                } else if(var12 % 2 == 1) {
-                                    var2 += 10;
+                                } else if(y % 2 == 1) {
+                                    util += 10; //If its even we can probably take it if we are p2
                                 }
-                            } else if(var3 == this.ourPlayer) {
+                            } else if(who == this.ourPlayer) {
                                 return 99999;
                             }
-                        } else if(var10 == 3) {
-                            if(var12 > 0 && var1.getAt(var11, var12 - 1) == 0) {
-                                if(var4[var11][var12] == this.ourPlayer) {
-                                    var4[var11][var12] = 3;
+                        }
+                        //If they control it
+                        else if(theirs == 3) {
+                            //If the slot below it is empty
+                            if(y > 0 && state.getAt(x, y - 1) == 0) {
+                                if(board[x][y] == this.ourPlayer) {
+                                    board[x][y] = 3;
                                 } else {
-                                    var4[var11][var12] = this.opponent;
+                                    board[x][y] = this.opponent;
                                 }
 
                                 if(this.ourPlayer == 1) {
-                                    if(var12 % 2 == 1) {
-                                        var2 -= 10;
+                                    if(y % 2 == 1) {
+                                        util -= 10; //If its odd
                                     }
-                                } else if(var12 % 2 == 0) {
-                                    var2 -= 10;
+                                } else if(y % 2 == 0) {
+                                    util -= 10; //If y is even???
                                 }
-                            } else if(var3 != this.ourPlayer) {
+                            } else if(who != this.ourPlayer) {
                                 return -99999;
                             }
                         }
 
-                        var2 += 1 * (var9 - var10);
+                        util += 1 * (ours - theirs);    //We also add the number we have in that slot
                     }
                 }
 
-                int var18 = 0;
-                var6 = 0;
-                var7 = 0;
-                int var19 = 0;
+                int myOdd = 0;
+                int idk = 0;
+                int oddShared = 0;
+                int notmine = 0;
 
-                for(var9 = 0; var9 < 7; ++var9) {
-                    boolean var20 = false;
-                    boolean var21 = false;
+                for(int x = 0; x < 7; ++x) {
+                    boolean seenOddMe = false;
+                    boolean seenEvenThem = false;
 
-                    for(var12 = 0; var12 < 6; ++var12) {
-                        if(var4[var9][var12] == 1) {
-                            if(var12 % 2 == 0 && !var21) {
-                                ++var18;
-                                var20 = true;
+                    for(y = 0; y < 6; ++y) {
+                        //Me
+                        if(board[x][y] == 1) {
+                            if(y % 2 == 0 && !seenEvenThem) {
+                                ++myOdd;
+                                seenOddMe = true;
                             }
-                        } else if(var4[var9][var12] == 2) {
-                            if(var12 % 2 == 1) {
-                                ++var19;
-                                var21 = true;
+                        //You
+                        } else if(board[x][y] == 2) {
+                            if(y % 2 == 1) {
+                                ++notmine;
+                                seenEvenThem = true;
                             } else {
-                                ++var7;
-                                if(!var20) {
-                                    ++var6;
+                                ++oddShared;
+                                if(!seenOddMe) {
+                                    ++idk;
                                 }
                             }
-                        } else if(var4[var9][var12] == 3) {
-                            if(var12 % 2 == 1) {
-                                var21 = true;
-                            } else if(!var21) {
-                                ++var18;
-                                var20 = true;
+                        //US
+                        } else if(board[x][y] == 3) {
+                            if(y % 2 == 1) {
+                                seenEvenThem = true;
+                            } else if(!seenEvenThem) {
+                                ++myOdd;
+                                seenOddMe = true;
                             }
                         }
                     }
                 }
 
-                if(var18 > 0 && var6 == 0) {
+                if(myOdd > 0 && idk == 0) {
                     if(this.ourPlayer == 1) {
-                        var2 += 100;
+                        util += 100;
                     } else {
-                        var2 -= 100;
+                        util -= 100;
                     }
-                } else if(var18 > var7 && var19 == 0) {
+                } else if(myOdd > oddShared && notmine == 0) {
                     if(this.ourPlayer == 1) {
-                        var2 += 100;
+                        util += 100;
                     } else {
-                        var2 -= 100;
+                        util -= 100;
                     }
-                } else if(var19 > 0) {
+                } else if(notmine > 0) {
                     if(this.ourPlayer == 1) {
-                        var2 -= 100;
+                        util -= 100;
                     } else {
-                        var2 += 100;
+                        util += 100;
                     }
                 }
 
-                return var2;
+                return util;
             }
         }
     }

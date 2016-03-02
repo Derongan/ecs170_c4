@@ -1,4 +1,7 @@
 /// Coordinates the game classes and runs the game.
+
+import java.io.IOException;
+
 /**
  * This class is responsible for gluing together the AI and human input modules
  * to play a game of Connect Four.  You will not need to modify the contents
@@ -44,6 +47,11 @@ public final class GameController
 	 */
 	public void play()
 	{
+//		try {
+//			System.in.read();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		// Draw the initial board
 		io.drawBoard(game);
 		// While not finished
@@ -106,7 +114,7 @@ public final class GameController
 			}
 			// Get the selected move
 			move = ai.chosenMove;
-			//System.out.print(move+1);
+			System.out.print(move+1);
 		}
 		catch(Exception e)
 		{
