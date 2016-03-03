@@ -26,10 +26,13 @@
 \newpage
 \tableofcontents
 \newpage
+
+\section{Preface}
+This is a project for ECS 170, Artificial Intelligence, at UC Davis. We wrote AI using minimax and alphabeta pruning in order to play and win connect 4.
 	
 \section{Evaluation}
 \subsection{Functions}
-Our evaluation function is a combination of two evaluation functions.
+Our evaluation function is a combination of two evaluation functions. Before getting into them we must first describe what a winning group is, as we will use this terminology throughout. A winning group is any combination of four slots on the board in one row, column, or diagonal. There are 69 total winning rows in the game.
 \subsubsection{Number owned in winning group}
 Our first evaluation function is a a count of all winning groups we own, weighted by the number we own in that group minus the count of all winning groups the opponent owns, again weighted by the number they own in that group. The equation for this is:
 \[f_1(x)=\sum_{n \in s_{1,r}}{numOwned_1(n)}-\sum_{n \in s_{2,r}}{numOwned_2(n)}\]
@@ -178,6 +181,7 @@ Our second heuristic is a bit lengthier to run through, as there are a total of 
 				\yw \& \gy \& \gy \& \rd \& \gy \& \gy \& \gy \& \\
 				\yw \& \gy \& \gy \& \rd \& \gy \& \gy \& \gy \& \\
 			};
+			%\draw[line width=.1cm, draw=red!30!black, cap=round] (1.87,2.10) -- (1.87, 0.10);
 		\end{tikzpicture}
 		\caption{As player 1}
 		\label{fig:stup1}
@@ -196,18 +200,19 @@ Our second heuristic is a bit lengthier to run through, as there are a total of 
 				\rd \& \gy \& \gy \&  \yw \& \gy \& \gy \& \gy \& \\
 				\rd \& \gy \& \gy \&  \yw \& \gy \& \gy \& \gy \& \\
 			};
+			%\draw[line width=.1cm, draw=yellow!30!black, cap=round] (1.87,2.10) -- (1.87, 0.10);
 		\end{tikzpicture}
 		\caption{As player 2}
 		\label{fig:stup2}
 	\end{subfigure}
 \end{figure}
 	
-If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games depend only on who goes first (we use no randomness so seed has no effect).
+If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games depend only on who goes first (we use no randomness so seed has no effect, last three game plays identical so omitted for brevity).
 	
 \newpage
 \subsection{Against RandomAI}
-	
-\begin{figure}[h]
+Against the random AI we win all 5 games, both as player 1 and as player 2.
+\begin{figure}[ht]
 	\centering
 	\begin{subfigure}[b]{0.4\linewidth}%
 		\centering%
@@ -222,11 +227,11 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 				\gy \&  \rd \&  \yw \& \rd \&  \gy \&  \gy \&  \gy \&  \\
 				\yw \& \yw \& \yw \& \rd \&  \gy \&  \gy \&  \yw \& \\
 			};
+			%\draw[line width=.1cm, draw=red!30!black, cap=round] (1.87,2.10) -- (1.87, 0.10);
 		\end{tikzpicture}%
 		\caption{As player 1}%
 		\label{fig:ran2}%
 	\end{subfigure}%
-		
 	\begin{subfigure}[b]{0.4\linewidth}%
 		\centering%
 		\begin{tikzpicture}%
@@ -244,7 +249,7 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 		\caption{As player 1}%
 		\label{fig:ran2}%
 	\end{subfigure}%
-	%
+	
 	\begin{subfigure}[b]{0.4\linewidth}%
 		\centering%
 		\begin{tikzpicture}%
@@ -262,12 +267,6 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 		\caption{As player 1}%
 		\label{fig:ran2}%
 	\end{subfigure}%
-	%
-\end{figure}%
-\begin{figure}[h]%
-	\centering%
-	%
-	%
 	\begin{subfigure}[b]{0.4\linewidth}%
 		\centering%
 		\begin{tikzpicture}%
@@ -281,11 +280,12 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 				\rd \&  \gy \&  \yw \& \yw \& \gy \&  \gy \&  \rd \&  \\
 				\rd \&  \rd \&  \yw \& \rd \&  \rd \&  \rd \&  \yw \& \\
 			};
+			%\draw[line width=.1cm, draw=yellow!30!black, cap=round] (1.87,2.60) -- (1.87, 0.6);
 		\end{tikzpicture}%
 		\caption{As player 2}%
 		\label{fig:ran2}%
-	\end{subfigure}%
-	%
+	\end{subfigure}
+	
 	\begin{subfigure}[b]{0.4\linewidth}%
 		\centering%
 		\begin{tikzpicture}%
@@ -305,15 +305,65 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 	\end{subfigure}%
 	%
 \end{figure}%
-%
-%
 \newpage
 \subsection{Against MonteCarloAI}
-\newpage
+Against Monte Carlo AI we win essentially every game. Shown below are 10 games against MonteCarloAI, half as player 1 and half as player 2. We win all 10 games.
+\begin{figure}[!ht]%
+	\centering
+	\begin{subfigure}[b]{0.35\textwidth}%
+		\centering%
+		\begin{tikzpicture}%
+			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
+			\matrix (mat) at (0,0) [matrix of nodes, ampersand replacement=\&, nodes={circle, minimum size=.4cm},%
+				anchor= south west,%
+			column sep={.1cm}, row sep={.1cm}] { \gy \&  \gy \&  \gy \&  \rd \&  \yw \& \gy \&  \gy \&  \\%
+				\gy \&  \gy \&  \gy \&  \yw \& \rd \&  \gy \&  \gy \&  \\%
+				\gy \&  \rd \&  \rd \&  \rd \&  \rd \&  \gy \&  \rd \&  \\%
+				\yw \& \yw \& \yw \& \rd \&  \rd \&  \gy \&  \yw \& \\%
+				\yw \& \rd \&  \rd \&  \yw \& \yw \& \gy \&  \yw \& \\%
+				\rd \&  \yw \& \rd \&  \rd \&  \yw \& \gy \&  \yw \& \\%
+			};%
+		\end{tikzpicture}%
+		\caption{As player 1}%
+		\label{fig:monty}%
+	\end{subfigure}%
+	%
+	\begin{subfigure}[b]{0.35\textwidth}%
+		\centering%
+		\begin{tikzpicture}%
+			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
+			\matrix (mat) at (0,0) [matrix of nodes, ampersand replacement=\&, nodes={circle, minimum size=.4cm},%
+				anchor= south west,%
+			column sep={.1cm}, row sep={.1cm}] { \gy \&  \gy \&  \yw \& \rd \&  \gy \&  \gy \&  \gy \&  \\%
+				\gy \&  \gy \&  \rd \&  \yw \& \gy \&  \gy \&  \gy \&  \\%
+				\rd \&  \gy \&  \rd \&  \rd \&  \rd \&  \rd \&  \gy \&  \\%
+				\yw \& \gy \&  \rd \&  \rd \&  \yw \& \yw \& \yw \& \\%
+				\yw \& \gy \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \\%
+				\yw \& \gy \&  \yw \& \rd \&  \rd \&  \yw \& \rd \&  \\%
+			};%
+		\end{tikzpicture}%
+		\caption{As player 1}%
+		\label{fig:monty}%
+	\end{subfigure}%
+	\begin{subfigure}[b]{0.35\textwidth}%
+		\centering%
+		\begin{tikzpicture}%
+			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
+			\matrix (mat) at (0,0) [matrix of nodes, ampersand replacement=\&, nodes={circle, minimum size=.4cm},%
+				anchor= south west,%
+			column sep={.1cm}, row sep={.1cm}] { \gy \&  \gy \&  \yw \& \rd \&  \gy \&  \gy \&  \gy \&  \\%
+				\gy \&  \gy \&  \rd \&  \yw \& \gy \&  \gy \&  \gy \&  \\%
+				\rd \&  \gy \&  \rd \&  \rd \&  \rd \&  \rd \&  \gy \&  \\%
+				\yw \& \gy \&  \rd \&  \rd \&  \yw \& \yw \& \yw \& \\%
+				\yw \& \gy \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \\%
+				\yw \& \gy \&  \yw \& \rd \&  \rd \&  \yw \& \rd \&  \\%
+			};%
+		\end{tikzpicture}%
+		\caption{As player 1}%
+		\label{fig:monty}%
+	\end{subfigure}%
 	
-\begin{figure}[h]%
-	\centering
-	\begin{subfigure}[b]{0.4\linewidth}%
+	\begin{subfigure}[b]{0.35\textwidth}%
 		\centering%
 		\begin{tikzpicture}%
 			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
@@ -330,72 +380,7 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 		\caption{As player 1}%
 		\label{fig:monty}%
 	\end{subfigure}%
-	%
-	\begin{subfigure}[b]{0.4\linewidth}%
-		\centering%
-		\begin{tikzpicture}%
-			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
-			\matrix (mat) at (0,0) [matrix of nodes, ampersand replacement=\&, nodes={circle, minimum size=.4cm},%
-				anchor= south west,%
-			column sep={.1cm}, row sep={.1cm}] { \gy \&  \gy \&  \yw \& \rd \&  \gy \&  \gy \&  \gy \&  \\%
-				\gy \&  \gy \&  \rd \&  \yw \& \gy \&  \gy \&  \gy \&  \\%
-				\rd \&  \gy \&  \rd \&  \rd \&  \rd \&  \rd \&  \gy \&  \\%
-				\yw \& \gy \&  \rd \&  \rd \&  \yw \& \yw \& \yw \& \\%
-				\yw \& \gy \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \\%
-				\yw \& \gy \&  \yw \& \rd \&  \rd \&  \yw \& \rd \&  \\%
-			};%
-		\end{tikzpicture}%
-		\caption{As player 1}%
-		\label{fig:monty}%
-	\end{subfigure}%
-		
-\end{figure}
-\begin{figure}[h]
-	\centering
-	%
-	\begin{subfigure}[b]{0.4\linewidth}%
-		\centering%
-		\begin{tikzpicture}%
-			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
-			\matrix (mat) at (0,0) [matrix of nodes, ampersand replacement=\&, nodes={circle, minimum size=.4cm},%
-				anchor= south west,%
-			column sep={.1cm}, row sep={.1cm}] { \gy \&  \gy \&  \yw \& \rd \&  \gy \&  \gy \&  \gy \&  \\%
-				\gy \&  \gy \&  \rd \&  \yw \& \gy \&  \gy \&  \gy \&  \\%
-				\rd \&  \gy \&  \rd \&  \rd \&  \rd \&  \rd \&  \gy \&  \\%
-				\yw \& \gy \&  \rd \&  \rd \&  \yw \& \yw \& \yw \& \\%
-				\yw \& \gy \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \\%
-				\yw \& \gy \&  \yw \& \rd \&  \rd \&  \yw \& \rd \&  \\%
-			};%
-		\end{tikzpicture}%
-		\caption{As player 1}%
-		\label{fig:monty}%
-	\end{subfigure}%
-	%
-	%
-	\begin{subfigure}[b]{0.4\linewidth}%
-		\centering%
-		\begin{tikzpicture}%
-			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
-			\matrix (mat) at (0,0) [matrix of nodes, ampersand replacement=\&, nodes={circle, minimum size=.4cm},%
-				anchor= south west,%
-			column sep={.1cm}, row sep={.1cm}] { \gy \&  \gy \&  \gy \&  \rd \&  \yw \& \gy \&  \gy \&  \\%
-				\gy \&  \gy \&  \gy \&  \yw \& \rd \&  \gy \&  \gy \&  \\%
-				\gy \&  \rd \&  \rd \&  \rd \&  \rd \&  \gy \&  \rd \&  \\%
-				\yw \& \yw \& \yw \& \rd \&  \rd \&  \gy \&  \yw \& \\%
-				\yw \& \rd \&  \rd \&  \yw \& \yw \& \gy \&  \yw \& \\%
-				\rd \&  \yw \& \rd \&  \rd \&  \yw \& \gy \&  \yw \& \\%
-			};%
-		\end{tikzpicture}%
-		\caption{As player 1}%
-		\label{fig:monty}%
-	\end{subfigure}%
-		
-		
-\end{figure}
-\begin{figure}[h]
-	\centering
-	%
-	\begin{subfigure}[b]{0.4\linewidth}%
+	\begin{subfigure}[b]{0.35\textwidth}%
 		\centering%
 		\begin{tikzpicture}%
 			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
@@ -413,7 +398,7 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 		\label{fig:monty}%
 	\end{subfigure}%
 	%
-	\begin{subfigure}[b]{0.4\linewidth}%
+	\begin{subfigure}[b]{0.35\textwidth}%
 		\centering%
 		\begin{tikzpicture}%
 			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
@@ -430,13 +415,8 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 		\caption{As player 2}%
 		\label{fig:monty}%
 	\end{subfigure}%
-	%
 		
-\end{figure}
-\begin{figure}[h]
-	\centering
-		
-	\begin{subfigure}[b]{0.4\linewidth}%
+	\begin{subfigure}[b]{0.35\textwidth}%
 		\centering%
 		\begin{tikzpicture}%
 			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
@@ -453,8 +433,7 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 		\caption{As player 2}%
 		\label{fig:monty}%
 	\end{subfigure}%
-	%
-	\begin{subfigure}[b]{0.4\linewidth}%
+	\begin{subfigure}[b]{0.35\textwidth}%
 		\centering%
 		\begin{tikzpicture}%
 			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
@@ -471,55 +450,43 @@ If MiniMax goes first see \ref{fig:stup1} otherwise see \ref{fig:stup2}. Games d
 		\caption{As player 2}%
 		\label{fig:monty}%
 	\end{subfigure}%
-		
-		
-\end{figure}
-\begin{figure}[h]
-	\centering
-		
-	%
-	\begin{subfigure}[b]{0.4\linewidth}%
+	\begin{subfigure}[b]{0.35\textwidth}%
 		\centering%
 		\begin{tikzpicture}%
 			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
 			\matrix (mat) at (0,0) [matrix of nodes, ampersand replacement=\&, nodes={circle, minimum size=.4cm},%
 				anchor= south west,%
 			column sep={.1cm}, row sep={.1cm}] { \gy \&  \gy \&  \yw \& \yw \& \rd \&  \gy \&  \gy \&  \\%
-				\gy \&  \gy \&  \rd \&  \yw \& \yw \& \yw \& \yw \& \\%
-				\yw \& \rd \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \\%
-				\rd \&  \yw \& \rd \&  \rd \&  \yw \& \yw \& \rd \&  \\%
-				\rd \&  \rd \&  \rd \&  \yw \& \rd \&  \yw \& \rd \&  \\%
-				\rd \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \rd \&  \\%
+				\gy \&  \gy \&  \rd \&  \yw \& \yw \& \yw \& \yw \& \\
+				\yw \& \rd \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \\
+				\rd \&  \yw \& \rd \&  \rd \&  \yw \& \yw \& \rd \&  \\
+				\rd \&  \rd \&  \rd \&  \yw \& \rd \&  \yw \& \rd \&  \\
+				\rd \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \rd \&  \\
 			};%
 		\end{tikzpicture}%
 		\caption{As player 2}%
 		\label{fig:monty}%
 	\end{subfigure}%
-	%
-	\begin{subfigure}[b]{0.4\linewidth}%
-		\centering%
-		\begin{tikzpicture}%
-			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
-			\matrix (mat) at (0,0) [matrix of nodes, ampersand replacement=\&, nodes={circle, minimum size=.4cm},%
-				anchor= south west,%
-			column sep={.1cm}, row sep={.1cm}] { \gy \&  \gy \&  \yw \& \yw \& \rd \&  \gy \&  \gy \&  \\%
-				\gy \&  \gy \&  \rd \&  \yw \& \yw \& \yw \& \yw \& \\%
-				\yw \& \rd \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \\%
-				\rd \&  \yw \& \rd \&  \rd \&  \yw \& \yw \& \rd \&  \\%
-				\rd \&  \rd \&  \rd \&  \yw \& \rd \&  \yw \& \rd \&  \\%
-				\rd \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \rd \&  \\%
-			};%
-		\end{tikzpicture}%
-		\caption{As player 2}%
-		\label{fig:monty}%
-	\end{subfigure}%
-	%
-\end{figure}%
-%
 	
+	\begin{subfigure}[b]{0.35\textwidth}%
+		\centering%
+		\begin{tikzpicture}%
+			\fill[blue!20] (0,0) rectangle (3.75,3.25);%
+			\matrix (mat) at (0,0) [matrix of nodes, ampersand replacement=\&, nodes={circle, minimum size=.4cm},%
+				anchor= south west,%
+			column sep={.1cm}, row sep={.1cm}] { \gy \&  \gy \&  \yw \& \yw \& \rd \&  \gy \&  \gy \&  \\
+				\gy \&  \gy \&  \rd \&  \yw \& \yw \& \yw \& \yw \& \\
+				\yw \& \rd \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \\
+				\rd \&  \yw \& \rd \&  \rd \&  \yw \& \yw \& \rd \&  \\
+				\rd \&  \rd \&  \rd \&  \yw \& \rd \&  \yw \& \rd \&  \\
+				\rd \&  \yw \& \yw \& \rd \&  \rd \&  \yw \& \rd \&  \\
+			};
+		\end{tikzpicture}%
+		\caption{As player 2}%
+		\label{fig:monty}%
+	\end{subfigure}%
+\end{figure}%
 \newpage
-\clearpage
-
 \section{Successor Function}
 We perform two different types of ordering: static and dynamic. The static ordering is very simple. We initialize an array storing what we have determined to be an ordering that usually results in a cutoff. First we try the center, then the two columns around it, then the ones next to that, then the edges. This gives a decent performance boost.
 		
@@ -564,4 +531,9 @@ The dynamic ordering is done using the concept of a \emph{killer heuristic}. The
 	\end{subfigure}
 		
 \end{figure}	
+
+\subsection{Abandoned Successor functions}
+In addition to the scheme used, we also attempted utilizing caching to allow for quick pruning of the game tree. We set up a simple LRU cache with a limited number of entries, and tried running our alpha-beta algorithm on it for different cache sizes. Ultimately, having no cache was faster than having a cache, probably due to our poor hash generation, as we used a simple hash function that essentially just performed a bitwise and on the bitboard representing player 1 and 2, and then returned the lower 32 bits. In retrospect it is obvious why this failed, as states that fill the same slots but with different colors are extremely common in our game tree, and this would cause a very large number of colisions when retrieving from the hashtable.
+
+There are a number of alternate hashing schemes that may have worked better, such assimply returning the long that encodes player 1's board, or extending Java's hashmap to use 64 bit keys, in which case we could encode every state as a unique 63 bit sequence (42 bits for blacks board, then 3 bits per column for the height of the column). Alternatively we could use a technique often used in chess playing AI, the Zobrist hash, which calculates a random number for each possible state of a single slot (excluding empty slots), and then loops over the board and xors the corresponding random numbers for each slot together. It may seem slow at first (we have to loop over 42 different slots initially) but the key lies in computing subsequent hashes. Since only one state has changed, we can simply xor the changed squares value with our old hash to get a new one. If we take a move back we simply xor the random value of that move, which will return the hash to its previous value. This hash function generally gives decent results.
 \end{document}
