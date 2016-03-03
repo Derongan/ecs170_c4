@@ -39,8 +39,7 @@ Our first evaluation function is a a count of all winning groups we own, weighte
 where $numOwned_{r,n}$ represents the number owned by player $r$ in the winning group n, and $s_r$ represents the winning groups soley owned by player $r$.
 \subsubsection{Odd/Even Threats}
 \label{oddeven}
-Our second evaluation function is more complicated. First it iterates over a list of all possible winning groups, and finds the threats. A threat is a slot that would complete a 4 in a row for either team. It then iterates over each of these threats and tallies them, categorizing them based on the team who owns the threat and the threats polarity (odd/even). Even threats are threats that have an even number of (necessarily) empty spaces above them, while odd threats are threats with an odd number of empty spaces above them (figure \ref{threattypes}). The function ignores a threat if there is a threat below it from the opposite team with opposite polarity (the reasoning will be explained in the section \ref{ssec:reasoning}). 
-		
+Our second evaluation function is more complicated. First it iterates over a list of all possible winning groups, and finds the threats. A threat is a slot that would complete a 4 in a row for either team. It then iterates over each of these threats and tallies them, categorizing them based on the team who owns the threat and the threats polarity (odd/even). Even threats are threats that have an even number of (necessarily) empty spaces above them, while odd threats are threats with an odd number of empty spaces above them (figure \ref{threattypes}). The function ignores a threat if there is a threat below it from the opposite team with opposite polarity (the reasoning will be explained in the section \ref{ssec:reasoning}).
 The function then checks if player 1 has more odd threats than player 2, if player 2 has two more odd threats than player one, or, if in the case they both have the same number, if player 2 has at least one even threat. If the former is satisfied it returns $100$, signifying that player one is in the lead. For the latter two it returns $-100$, signifying the opposite, and if none of the cases are satisfied we return 0. The equation looks like the following piecewise:
 \[ f_2(x,y)=\begin{cases} 
 	100 & odd(x)>odd(y) \\
@@ -93,9 +92,6 @@ where x is all threats by player 1, and y is all threats by player 2.
 	\label{threattypes}
 \end{figure}
 
-\subsubsection{Abandonded function - Islands}
-Our last idea for an evaluation function was to count the number of islands created by player 1 and player 2 on the board, compare them, and return a reasonable evaluation value. An island is essentially a connected component in an undirected graph, and we viewed it in a perspective where having more of our same coins clumped together was advantageous to us because we can then make moves from various angles and end up forcing victory over our opponent. Thus, given that the number of player 1's coins and player 2's coins on the board are about the same, having the lesser number of islands could be more advantageous. We solved this by implementing a depth first search, which we would run on each unvisited cell. We proceeded to count up the number of islands for each player. Finally, it was important that we returned the difference of the number of islands rather than the value of the least island count, since we took into consideration that the evaluation should not be extremely high if the difference was small. While it worked sometimes, we quickly found situations where it hurt the evaluation. In addition, we found that the other evaluation functions worked quite well, and decided to stick to those. 
-
 \subsection{Reasoning}
 \label{ssec:reasoning}
 Our first evaluation function is straightforward. We want to value states where we have more control of the winning positions more. If we control a winning position (only our pieces are in it), we can use it to win. If the enemy controls it they can use it to win. Additionally, if more of our/their pieces are in a winning position, we need less moves to complete that win, which is favourable.
@@ -128,7 +124,7 @@ We will use figure \ref{fig:example} as our example game state. First we will ru
 Our second heuristic is a bit lengthier to run through, as there are a total of 69 winning positions we need to consider. Here, however, only 8 winning positions are not invalid due to having two different players in them, and of those two (the rightmost column starting from the top and the second from top) have no pieces in them. We can easily count the number owned by red and yellow in each group, and we see that the result is $7-6 = 1$.
 
 Both our evaluation functions favour red, and as seen in figure \ref{fig:win}, we have guessed correctly as red does win.
-\begin{figure}[t]
+\begin{figure}[!ht]
 	\centering
 	\begin{subfigure}[b]{0.4\textwidth}
 		\centering
@@ -169,6 +165,10 @@ Both our evaluation functions favour red, and as seen in figure \ref{fig:win}, w
 	\end{subfigure}
 	\caption{Example}
 \end{figure}
+\newpage
+\subsection{Abandonded function - Islands}
+Our last idea for an evaluation function was to count the number of islands created by player 1 and player 2 on the board, compare them, and return a reasonable evaluation value. An island is essentially a connected component in an undirected graph, and we viewed it in a perspective where having more of our same coins clumped together was advantageous to us because we can then make moves from various angles and end up forcing victory over our opponent. Thus, given that the number of player 1's coins and player 2's coins on the board are about the same, having the lesser number of islands could be more advantageous. We solved this by implementing a depth first search, which we would run on each unvisited cell. We proceeded to count up the number of islands for each player. Finally, it was important that we returned the difference of the number of islands rather than the value of the least island count, since we took into consideration that the evaluation should not be extremely high if the difference was small. While it seemed to perform decently, it was much much slower than our other evaluation functions (due in part to the lack of easy ways to perform it using bit manipulation), so impaired the depth our algorithm could reach, and was ultinmately scrapped.
+
 \newpage
 \section{MiniMax Against poor AI}
 We win every game in the section below. We played around half of the games as player one, and around half of the games as player two (Our player is indicated below each board).
