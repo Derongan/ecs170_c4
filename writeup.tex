@@ -91,6 +91,10 @@ where x is all threats by player 1, and y is all threats by player 2.
 	\caption{Types of threats (threat marked with squares)}
 	\label{threattypes}
 \end{figure}
+
+\subsubsection{Abandonded function - Islands}
+Our last idea for an evaluation function was to count the number of islands created by player 1 and player 2 on the board, compare them, and return a reasonable evaluation value. An island is essentially a connected component in an undirected graph, and we viewed it in a perspective where having more of our same coins clumped together was advantageous to us because we can then make moves from various angles and end up forcing victory over our opponent. Thus, given that the number of player 1's coins and player 2's coins on the board are about the same, having the lesser number of islands could be more advantageous. We solved this by implementing a depth first search, which we would run on each unvisited cell. We proceeded to count up the number of islands for each player. Finally, it was important that we returned the difference of the number of islands rather than the value of the least island count, since we took into consideration that the evaluation should not be extremely high if the difference was small. While it worked sometimes, we quickly found situations where it hurt the evaluation. In addition, we found that the other evaluation functions worked quite well, and decided to stick to those. 
+
 \subsection{Reasoning}
 \label{ssec:reasoning}
 Our first evaluation function is straightforward. We want to value states where we have more control of the winning positions more. If we control a winning position (only our pieces are in it), we can use it to win. If the enemy controls it they can use it to win. Additionally, if more of our/their pieces are in a winning position, we need less moves to complete that win, which is favourable.
