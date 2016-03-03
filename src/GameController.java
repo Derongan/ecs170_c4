@@ -114,7 +114,6 @@ public final class GameController
 			}
 			// Get the selected move
 			move = ai.chosenMove;
-			System.out.print(move+1);
 		}
 		catch(Exception e)
 		{
