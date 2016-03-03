@@ -1,13 +1,18 @@
-
-
-public class NegaMaxFinalAI extends AIModule{
+public class alphabeta_kearney1 extends AIModule{
     private final int WORST = -10000;
     private final int BEST = 10000;
+
     private final int startDepth = 1;
     private final int NOHOPE = -2000;
 
+    private final int[] defaultOrder = {3,2,4,5,1,0,6};
+
+    private final int[] bestAtLevel = new int[50];
+
+    private int maxDepth;
+
     //All 69 possible winning groups
-    public static long[] winGroups = {
+    private final static long[] winGroups = {
             //4 vertical from 0 row
             15L,
             1920L,
@@ -90,30 +95,53 @@ public class NegaMaxFinalAI extends AIModule{
             17871426027520L
     };
 
-    private final int[] defaultOrder = {3,2,4,5,1,0,6};
-
     @Override
     public void getNextMove(GameStateModule game) {
-        chosenMove = 4;
+        chosenMove = 3;
 
         int depth = startDepth;
 
         int move;
 
+
         BitBoard board = new BitBoard(game);
 
         int who = board.getActivePlayer() == 2 ? -1 : 1;
 
-
-        while (!terminate) {
+        while(!terminate){
             move = negaMaxAB(depth, board, who);
-
-            if (!terminate && move != NOHOPE)
+            if(!terminate && move != NOHOPE)
                 chosenMove = move;
             depth++;
         }
 
-        //System.out.println("Max reached depth " + String.valueOf(depth - 1) + " by player " + String.valueOf(us));
+        //System.out.println("Max reached depth " + String.valueOf(depth - 1));
+    }
+
+    private int[] order(int depth){
+        depth = maxDepth-depth;
+        if(bestAtLevel[depth] == -1)
+            return defaultOrder;
+
+        int x = bestAtLevel[depth];
+
+        int[] ordering = new int[7];
+
+        //Set first to one that prunes best
+        ordering[0] = x;
+
+        //Place to take from our default array
+        int pos = 0;
+
+        //For position 1 to 6
+        for(int i = 1; i < 7; i++){
+            //If our default array at i is the best, we already inserted it so skip!
+            if(x == defaultOrder[pos])
+                pos++;
+            ordering[i] = defaultOrder[pos];
+            pos++;
+        }
+        return ordering;
     }
 
     //General evaluation function for earlier game
@@ -123,11 +151,10 @@ public class NegaMaxFinalAI extends AIModule{
 
         int ret = 0;
 
-        for(int i = 0; i < winGroups.length; i++){
-            long board = winGroups[i];
+        for(long board : winGroups) {
             //If they are the sole owners of this winslot
-            if((p1b & board) == 0){
-                switch(Long.bitCount(p2b & board)){
+            if ((p1b & board) == 0) {
+                switch (Long.bitCount(p2b & board)) {
                     case 1:
                         ret -= 1;
                         break;
@@ -140,8 +167,8 @@ public class NegaMaxFinalAI extends AIModule{
                 }
             }
             //If we are the sole owners of this winslot
-            else if((p2b & board) == 0){
-                switch(Long.bitCount(p1b & board)){
+            else if ((p2b & board) == 0) {
+                switch (Long.bitCount(p1b & board)) {
                     case 1:
                         ret += 1;
                         break;
@@ -175,7 +202,6 @@ public class NegaMaxFinalAI extends AIModule{
         int lastCol = -1;
 
         int odd1 = 0;
-        int even1 = 0;
         int odd2 = 0;
         int even2 = 0;
 
@@ -208,7 +234,6 @@ public class NegaMaxFinalAI extends AIModule{
                         ignoreEven2 = true;
                     }
                     else if (!ignoreEven1) {//Even
-                        even1++;
                         ignoreOdd2 = true;
                     }
                 }
@@ -231,7 +256,6 @@ public class NegaMaxFinalAI extends AIModule{
                         ignoreEven2 = true;
                     }
                     else {//Even
-                        even1++;
                         ignoreOdd2 = true;
                     }
                 }
@@ -265,6 +289,9 @@ public class NegaMaxFinalAI extends AIModule{
     }
 
     private int negaMaxAB(int depth, BitBoard state, int who){
+        //System.out.println("INIT");
+        maxDepth = depth;
+
         int max = WORST;
         int score;
 
@@ -281,7 +308,7 @@ public class NegaMaxFinalAI extends AIModule{
             int x = defaultOrder[i];
             if(state.canMakeMove(x)) {
                 state.makeMove(x);
-                score = -negaMaxABHelper(depth - 1, state, -who);
+                score = -negaMaxABHelper(depth - 1, state, -who, -beta, -alpha);
                 state.unMakeMove();
             }
             else{
@@ -294,6 +321,8 @@ public class NegaMaxFinalAI extends AIModule{
             if(score <= WORST)
                 h++;
 
+            //System.out.println(score+" "+terminate);
+
             alpha = Math.max(alpha, score);
             if (alpha >= beta)
                 break;
@@ -304,11 +333,18 @@ public class NegaMaxFinalAI extends AIModule{
         if(h == 7){
             return NOHOPE;
         }
+
         return move;
     }
 
-    private int negaMaxABHelper(int depth, BitBoard state, int who){
+    private int negaMaxABHelper(int depth, BitBoard state, int who, int alpha, int beta){
         int max = WORST;
+
+        //The column that was best
+        int bestMove = 0;
+
+        //Ordering to use
+        int[] ordering = order(depth);
 
         if(terminate){
             return 0;
@@ -327,19 +363,25 @@ public class NegaMaxFinalAI extends AIModule{
             int score;
             //state.getWidth() -> 7
             for (int i = 0; i < 7; i++) {
-                int x = defaultOrder[i];
+                int x = ordering[i];
                 if (state.canMakeMove(x)) {
                     state.makeMove(x);
-                    score = -negaMaxABHelper(depth - 1, state, -who);
+                    score = -negaMaxABHelper(depth - 1, state, -who, -beta, -alpha);
                     state.unMakeMove();
 
                     if(max < score) {
+                        bestMove = x;
                         max = score;
                         //max = Math.max(score, max);
                     }
+                    alpha = Math.max(alpha, score);
+                    if (alpha >= beta)
+                        break;
                 }
             }
         }
+
+        bestAtLevel[maxDepth-depth] = bestMove;
 
         return max;
     }
@@ -348,23 +390,23 @@ public class NegaMaxFinalAI extends AIModule{
     //BEGIN NESTED BITBOARD
 
     public class BitBoard {
-        public long board[] = {0L, 0L};
-        public int height[] = {0, 7, 14, 21, 28, 35, 42};
-        public int moves[] = new int[7 * 6];
+        public final long[] board = {0L, 0L};
+        public final int[] height = {0, 7, 14, 21, 28, 35, 42};
+        public final int[] moves = new int[7 * 6];
         public int togo = 0;
 
 
-        static final int WIDTH = 7;
-        static final int HEIGHT = 6;
+        final int WIDTH = 7;
+        final int HEIGHT = 6;
 
-        static final int H1 = HEIGHT + 1;
-        static final int H2 = HEIGHT + 2;
-        static final int SIZE = HEIGHT * WIDTH;
-        static final int SIZE1 = H1 * WIDTH;
-        static final long ALL1 = (1L << SIZE1) - 1L; // assumes SIZE1 < 63
-        static final int COL1 = (1 << H1) - 1;
-        static final long BOTTOM = ALL1 / COL1; // has bits i*H1 set
-        static final long TOP = BOTTOM << HEIGHT;
+        final int H1 = HEIGHT + 1;
+        final int H2 = HEIGHT + 2;
+        final int SIZE = HEIGHT * WIDTH;
+        final int SIZE1 = H1 * WIDTH;
+        final long ALL1 = (1L << SIZE1) - 1L; // assumes SIZE1 < 63
+        final int COL1 = (1 << H1) - 1;
+        final long BOTTOM = ALL1 / COL1; // has bits i*H1 set
+        final long TOP = BOTTOM << HEIGHT;
 
         int winner = -1;
 
@@ -489,8 +531,7 @@ public class NegaMaxFinalAI extends AIModule{
 
         public BitBoard findThreats() {
             BitBoard threats = new BitBoard();
-            for (int i = 0; i < winGroups.length; i++) {
-                long b = winGroups[i];
+            for(long b : winGroups) {
                 //If they are the sole owners of this winslot
                 if ((board[0] & b) == 0) {
                     if (Long.bitCount(board[1] & b) == 3) {
@@ -502,8 +543,6 @@ public class NegaMaxFinalAI extends AIModule{
                     if (Long.bitCount(board[0] & b) == 3) {
                         threats.board[0] |= ~board[0] & b;
                     }
-                } else {
-                    continue;
                 }
             }
 
@@ -515,4 +554,5 @@ public class NegaMaxFinalAI extends AIModule{
             return (int) (board[0] + board[1] + (togo & 1));
         }
     }
+
 }
